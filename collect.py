@@ -17,10 +17,6 @@ def get_time_slot():
     return str(slot)
 
 
-def get_filename():
-    return datetime.now().strftime("%Y-%m-%d.json")
-
-
 def load_or_create_json(filename):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
@@ -36,24 +32,25 @@ def save_json(filename, data):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=2)
 
-def get_filepath():
-    filename = datetime.now().strftime("%Y-%m-%d.json")
+
+def get_filepath(name):
+    filename = f"{name}-{datetime.now().strftime('%Y-%m-%d')}.json"
     return os.path.join(DATA_DIR, filename)
+
 
 async def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    filepath = get_filepath()
-    data = load_or_create_json(filepath)
     slot = get_time_slot()
 
-    # 🔹 Crear o sobrescribir completamente el intervalo
-    data["intervals"][slot] = {
-        "timestamp_iso": datetime.fromtimestamp(int(slot)).isoformat(),
-        "inverters": {}
-    }
-
     for name, inverter_config in config['inversores'].items():
+        filepath = get_filepath(name)
+        data = load_or_create_json(filepath)
+
+        data["intervals"][slot] = {
+            "timestamp_iso": datetime.fromtimestamp(int(slot)).isoformat(),
+        }
+
         inverter = APsystemsEZ1M(
             inverter_config['ip'],
             inverter_config['port']
@@ -62,18 +59,16 @@ async def main():
         try:
             response = await inverter.get_output_data()
 
-            data["intervals"][slot]["inverters"][name] = {
+            data["intervals"][slot].update({
                 "p1": response.p1,
                 "p2": response.p2,
                 "total_w": response.p1 + response.p2
-            }
+            })
 
         except Exception:
-            data["intervals"][slot]["inverters"][name] = {
-                "error": True
-            }
+            data["intervals"][slot]["error"] = True
 
-    save_json(filepath, data)
+        save_json(filepath, data)
 
 
 asyncio.run(main())
