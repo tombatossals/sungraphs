@@ -10,4 +10,4 @@ cd "$BASE_DIR"
 
 git add -A
 git commit -m "up"
-git push
+git push -q
