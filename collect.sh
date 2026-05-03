@@ -9,5 +9,5 @@ cd "$BASE_DIR"
 "$BASE_DIR/.venv/bin/python" collect.py
 
 git add -A
-git commit -m "up"
+git commit -q -m "up"
 git push -q
