@@ -35,8 +35,8 @@ export default function HistoryChart({ data }: Props) {
       {
         label: "Wh generados",
         data: data.map(d => d.total_wh),
-        borderColor: "#be123c",
-        backgroundColor: "rgba(190, 18, 60, 0.18)",
+        borderColor: "#90b7aa",
+        backgroundColor: "rgba(144, 183, 170, 0.18)",
         tension: 0.25,
         pointRadius: 3,
         pointHoverRadius: 5,

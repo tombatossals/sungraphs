@@ -42,8 +42,8 @@ export default function DailyChart({ data }: Props) {
       {
         label: "Total W",
         data: intervals.map(i => i.total_w),
-        borderColor: "#f97316",
-        backgroundColor: "rgba(249, 115, 22, 0.18)",
+        borderColor: "#7bb9a4",
+        backgroundColor: "rgba(123, 185, 164, 0.18)",
         tension: 0.28,
         pointRadius: 0,
         borderWidth: 3
@@ -51,8 +51,8 @@ export default function DailyChart({ data }: Props) {
       {
         label: "P1",
         data: intervals.map(i => i.p1),
-        borderColor: "#0f766e",
-        backgroundColor: "rgba(15, 118, 110, 0.18)",
+        borderColor: "#aab7c8",
+        backgroundColor: "rgba(170, 183, 200, 0.18)",
         tension: 0.28,
         pointRadius: 0,
         borderWidth: 2
@@ -60,8 +60,8 @@ export default function DailyChart({ data }: Props) {
       {
         label: "P2",
         data: intervals.map(i => i.p2),
-        borderColor: "#2563eb",
-        backgroundColor: "rgba(37, 99, 235, 0.18)",
+        borderColor: "#d8b7a2",
+        backgroundColor: "rgba(216, 183, 162, 0.18)",
         tension: 0.28,
         pointRadius: 0,
         borderWidth: 2

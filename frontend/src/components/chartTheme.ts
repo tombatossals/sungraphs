@@ -13,10 +13,11 @@ function readCssVar(name: string, fallback: string) {
 }
 
 export function createLineChartOptions(): ChartOptions<"line"> {
-  const textColor = readCssVar("--chart-text", "#1f2937");
-  const gridColor = readCssVar("--chart-grid", "rgba(148, 163, 184, 0.2)");
-  const tooltipBackground = readCssVar("--chart-tooltip-bg", "#0f172a");
-  const tooltipText = readCssVar("--chart-tooltip-text", "#f8fafc");
+  const textColor = readCssVar("--chart-text", "#556070");
+  const gridColor = readCssVar("--chart-grid", "rgba(201, 210, 218, 0.65)");
+  const tooltipBackground = readCssVar("--chart-tooltip-bg", "rgba(255, 255, 255, 0.96)");
+  const tooltipText = readCssVar("--chart-tooltip-text", "#334155");
+  const tooltipBorder = readCssVar("--chart-tooltip-border", "rgba(203, 213, 225, 0.9)");
 
   return {
     responsive: true,
@@ -39,8 +40,12 @@ export function createLineChartOptions(): ChartOptions<"line"> {
         backgroundColor: tooltipBackground,
         titleColor: tooltipText,
         bodyColor: tooltipText,
+        borderColor: tooltipBorder,
+        borderWidth: 1,
         displayColors: true,
-        padding: 12
+        padding: 12,
+        titleMarginBottom: 8,
+        cornerRadius: 14
       }
     },
     scales: {
@@ -49,7 +54,11 @@ export function createLineChartOptions(): ChartOptions<"line"> {
           color: textColor,
           maxRotation: 0,
           autoSkip: true,
-          maxTicksLimit: 10
+          maxTicksLimit: 10,
+          padding: 10
+        },
+        border: {
+          display: false
         },
         grid: {
           color: gridColor
@@ -57,7 +66,11 @@ export function createLineChartOptions(): ChartOptions<"line"> {
       },
       y: {
         ticks: {
-          color: textColor
+          color: textColor,
+          padding: 10
+        },
+        border: {
+          display: false
         },
         grid: {
           color: gridColor
