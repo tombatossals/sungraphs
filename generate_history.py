@@ -108,7 +108,6 @@ def main() -> None:
     entry = build_history_entry(target_date)
     updated_history = upsert_history_entry(history, entry)
     save_history(updated_history)
-    print(f"Actualizado {HISTORY_FILE} para {target_date}.")
 
 
 if __name__ == "__main__":
