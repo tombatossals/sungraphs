@@ -41,6 +41,10 @@ def get_filepath(name):
     return os.path.join(DATA_DIR, filename)
 
 
+def round_value(value):
+    return round(value, 2)
+
+
 async def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -63,13 +67,13 @@ async def main():
             response = await inverter.get_output_data()
 
             data["totals"] = {
-                "p1": response.e1 * 1000,
-                "p2": response.e2 * 1000,
+                "p1": round_value(response.e1 * 1000),
+                "p2": round_value(response.e2 * 1000),
             }
 
             data["intervals"][slot].update({
-                "p1": response.p1,
-                "p2": response.p2,
+                "p1": round_value(response.p1),
+                "p2": round_value(response.p2),
             })
 
 
