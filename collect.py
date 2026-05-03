@@ -20,10 +20,13 @@ def get_time_slot():
 def load_or_create_json(filename):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
-            return json.load(f)
+            data = json.load(f)
+            data.setdefault("totals", {})
+            return data
     else:
         return {
             "date": datetime.now().strftime("%d/%m/%Y"),
+            "totals": {},
             "intervals": {}
         }
 
@@ -48,7 +51,7 @@ async def main():
         data = load_or_create_json(filepath)
 
         data["intervals"][slot] = {
-            "timestamp_iso": datetime.fromtimestamp(int(slot)).isoformat(),
+            "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
         }
 
         inverter = APsystemsEZ1M(
@@ -59,11 +62,16 @@ async def main():
         try:
             response = await inverter.get_output_data()
 
+            data["totals"] = {
+                "p1": response.e1 * 1000,
+                "p2": response.e2 * 1000,
+            }
+
             data["intervals"][slot].update({
                 "p1": response.p1,
                 "p2": response.p2,
-                "total_w": response.p1 + response.p2
             })
+
 
         except Exception:
             data["intervals"][slot]["error"] = True
