@@ -1,10 +1,10 @@
-import type { CSSProperties } from "react";
+import { useState, useRef, type PointerEvent } from "react";
 import type { HistoryEntry } from "../types";
 
 interface HeatmapCell {
   date: string;
   totalWh: number | null;
-  level: 0 | 1 | 2 | 3 | 4;
+  level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
   inRange: boolean;
 }
 
@@ -19,7 +19,6 @@ interface Props {
   onSelectDate: (date: string) => void;
 }
 
-const WEEKDAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
 const MONTH_LABELS = [
   "Ene",
   "Feb",
@@ -36,11 +35,14 @@ const MONTH_LABELS = [
 ];
 
 const CELL_LEVEL_CLASSES: Record<HeatmapCell["level"], string> = {
-  0: "bg-[#eef2f4]",
-  1: "bg-[#dff2eb]",
-  2: "bg-[#bae6d2]",
-  3: "bg-[#85d2ba]",
-  4: "bg-[#59b79d]"
+  0: "bg-[#d4d9df]",
+  1: "bg-[#ef6b5e]",
+  2: "bg-[#e8844a]",
+  3: "bg-[#f0a050]",
+  4: "bg-[#e8b848]",
+  5: "bg-[#f0d060]",
+  6: "bg-[#a8c878]",
+  7: "bg-[#59b79d]"
 };
 
 function parseDate(value: string) {
@@ -73,25 +75,19 @@ function endOfWeek(date: Date) {
   return addDays(startOfWeek(date), 6);
 }
 
-function getLevel(totalWh: number, maxWh: number): 0 | 1 | 2 | 3 | 4 {
+function getLevel(totalWh: number, maxWh: number): HeatmapCell["level"] {
   if (maxWh <= 0 || totalWh <= 0) {
     return 0;
   }
 
   const ratio = totalWh / maxWh;
 
-  if (ratio >= 0.8) {
-    return 4;
-  }
-
-  if (ratio >= 0.55) {
-    return 3;
-  }
-
-  if (ratio >= 0.3) {
-    return 2;
-  }
-
+  if (ratio >= 0.86) return 7;
+  if (ratio >= 0.72) return 6;
+  if (ratio >= 0.58) return 5;
+  if (ratio >= 0.44) return 4;
+  if (ratio >= 0.30) return 3;
+  if (ratio >= 0.16) return 2;
   return 1;
 }
 
@@ -121,9 +117,10 @@ function buildWeeks(data: HistoryEntry[]): HeatmapWeek[] {
   const sortedData = [...data].sort((left, right) => left.date.localeCompare(right.date));
   const totalsByDate = new Map(sortedData.map(entry => [entry.date, entry.total_wh]));
   const firstDate = parseDate(sortedData[0].date);
-  const lastDate = parseDate(sortedData[sortedData.length - 1].date);
-  const startDate = startOfWeek(firstDate);
-  const endDate = endOfWeek(lastDate);
+  const today = new Date();
+  const yearStart = new Date(firstDate.getFullYear(), 0, 1);
+  const startDate = startOfWeek(yearStart);
+  const endDate = endOfWeek(today);
   const maxWh = Math.max(...sortedData.map(entry => entry.total_wh), 0);
   const weeks: HeatmapWeek[] = [];
   let cursor = new Date(startDate);
@@ -159,133 +156,100 @@ function buildWeeks(data: HistoryEntry[]): HeatmapWeek[] {
   return weeks;
 }
 
+interface TooltipState {
+  x: number;
+  y: number;
+  text: string;
+}
+
 export default function ProductionHeatmap({ data, selectedDate, onSelectDate }: Props) {
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const weeks = buildWeeks(data);
-  const selectedEntry = data.find(entry => entry.date === selectedDate) ?? null;
-  const heatmapStyle = { "--heatmap-weeks": weeks.length } as CSSProperties;
 
   if (weeks.length === 0) {
     return null;
   }
 
+  function showTooltip(e: PointerEvent, label: string) {
+    clearTimeout(hideTimer.current);
+    setTooltip({ x: e.clientX, y: e.clientY, text: label });
+  }
+
+  function hideTooltip() {
+    hideTimer.current = setTimeout(() => setTooltip(null), 80);
+  }
+
   return (
-    <section
-      className="mb-0 rounded-[30px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-5 text-left shadow-[0_24px_60px_rgba(148,163,184,0.14),inset_0_1px_0_rgba(255,255,255,0.88)] md:p-6"
-      aria-label="Calendario de produccion solar"
-    >
-      <div className="mb-[18px] flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-        <div>
-          <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-            Selector de fecha
-          </p>
-          <h2 className="mb-2 text-[30px] font-medium tracking-[-0.05em] text-[color:var(--text-h)] md:text-[34px]">
-            Calendario de producción
-          </h2>
-          <p className="max-w-[28rem] text-[0.98rem] leading-7 text-[color:var(--text)]">
-            Pulsa un día para cargar su curva de producción.
-          </p>
-        </div>
-        <div
-          className="flex min-w-0 flex-col gap-1 rounded-[22px] border border-[color:var(--panel-border)] bg-[color:var(--panel-muted)] px-4 py-3 text-[color:var(--text-h)] shadow-[inset_0_1px_0_rgba(255,255,255,0.78)] md:min-w-[220px] md:items-end"
-          aria-live="polite"
-        >
-          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-            Producción activa
-          </span>
-          <strong className="text-[1.4rem] font-medium leading-none tracking-[-0.04em]">
-            {selectedEntry ? formatProduction(selectedEntry.total_wh) : "Selecciona un día"}
-          </strong>
-          <span className="text-[0.95rem] text-[color:var(--text)]">
-            {selectedEntry ? formatLongDate(selectedEntry.date) : ""}
-          </span>
-        </div>
-      </div>
-
+    <>
       <div
-        className="rounded-[24px] border border-[color:var(--panel-border)] bg-[color:var(--panel-muted)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] overflow-x-auto"
-        role="grid"
-        aria-label="Mapa de calor de producción diaria"
-        style={heatmapStyle}
-      >
-        <div
-          className="mb-3 grid min-w-max grid-cols-[22px_repeat(var(--heatmap-weeks),14px)] gap-[5px] text-left text-[0.72rem] font-medium leading-none text-[color:var(--text-soft)] md:grid-cols-[22px_repeat(var(--heatmap-weeks),16px)] md:gap-[6px]"
-          aria-hidden="true"
-        >
-          <span />
-          {weeks.map(week => (
-            <span key={`${week.label}-${week.cells[0].date}`}>
-              {week.label}
-            </span>
-          ))}
-        </div>
-
-        <div className="flex min-w-max gap-2 md:gap-[10px]">
-          <div
-            className="grid grid-rows-[repeat(7,14px)] gap-[5px] pt-px text-[0.72rem] font-medium text-[color:var(--text-soft)] md:grid-rows-[repeat(7,16px)] md:gap-[6px]"
-            aria-hidden="true"
-          >
-            {WEEKDAY_LABELS.map(label => (
-              <span key={label} className="flex w-[22px] items-center justify-center">
-                {label}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex gap-[5px] md:gap-[6px]">
-            {weeks.map(week => (
-              <div
-                key={week.cells[0].date}
-                className="grid grid-rows-[repeat(7,14px)] gap-[5px] md:grid-rows-[repeat(7,16px)] md:gap-[6px]"
-                role="rowgroup"
-              >
-                {week.cells.map(cell => {
-                  const isSelectable = typeof cell.totalWh === "number";
-                  const className = [
-                    "size-3.5 rounded-[6px] border border-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] transition duration-150 ease-out md:size-4",
-                    CELL_LEVEL_CLASSES[cell.level],
-                    isSelectable ? "cursor-pointer hover:-translate-y-px hover:shadow-[0_10px_18px_rgba(148,163,184,0.22)] focus-visible:-translate-y-px" : "cursor-default",
-                    !cell.inRange || !isSelectable ? "opacity-35" : "",
-                    cell.date === selectedDate
-                      ? "ring-2 ring-[#9ccfbe] ring-offset-2 ring-offset-[color:var(--panel-muted)]"
-                      : "",
-                    isSelectable
-                      ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c7ddd5] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--panel-muted)]"
-                      : ""
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
-
-                  return (
-                    <button
-                      key={cell.date}
-                      type="button"
-                      className={className}
-                      onClick={() => isSelectable && onSelectDate(cell.date)}
-                      disabled={!isSelectable}
-                      aria-pressed={cell.date === selectedDate}
-                      aria-label={`${formatLongDate(cell.date)}: ${formatProduction(cell.totalWh)}`}
-                      title={`${formatLongDate(cell.date)}: ${formatProduction(cell.totalWh)}`}
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="mt-4 flex flex-wrap items-center justify-start gap-2 text-[0.78rem] font-medium text-[color:var(--text-soft)] md:justify-end"
+        className="flex items-center justify-end gap-1 text-[0.55rem] font-medium text-[color:var(--text-soft)]"
         aria-hidden="true"
       >
         <span>Menos</span>
-        <span className="size-3.5 rounded-[6px] bg-[#eef2f4] md:size-4" />
-        <span className="size-3.5 rounded-[6px] bg-[#dff2eb] md:size-4" />
-        <span className="size-3.5 rounded-[6px] bg-[#bae6d2] md:size-4" />
-        <span className="size-3.5 rounded-[6px] bg-[#85d2ba] md:size-4" />
-        <span className="size-3.5 rounded-[6px] bg-[#59b79d] md:size-4" />
+        <span className="size-2 rounded-[1.5px] bg-[#d4d9df]" />
+        <span className="size-2 rounded-[1.5px] bg-[#ef6b5e]" />
+        <span className="size-2 rounded-[1.5px] bg-[#e8844a]" />
+        <span className="size-2 rounded-[1.5px] bg-[#f0a050]" />
+        <span className="size-2 rounded-[1.5px] bg-[#e8b848]" />
+        <span className="size-2 rounded-[1.5px] bg-[#f0d060]" />
+        <span className="size-2 rounded-[1.5px] bg-[#a8c878]" />
+        <span className="size-2 rounded-[1.5px] bg-[#59b79d]" />
         <span>Más</span>
       </div>
-    </section>
+      <div
+        className="border border-[#e1e4e8] p-1.5 md:p-2"
+      >
+        <div className="overflow-x-auto" role="grid" aria-label="Mapa de calor de producción diaria">
+        <div className="flex gap-[3px] md:gap-[4px]">
+          {weeks.map(week => (
+            <div
+              key={week.cells[0].date}
+              className="grid grid-rows-[repeat(7,10px)] gap-[3px] md:grid-rows-[repeat(7,12px)] md:gap-[4px]"
+              role="rowgroup"
+            >
+              {week.cells.map(cell => {
+                const isSelectable = typeof cell.totalWh === "number";
+                const className = [
+                  "size-2.5 md:size-3",
+                  CELL_LEVEL_CLASSES[cell.level],
+                  isSelectable ? "cursor-pointer" : "cursor-default",
+                  !cell.inRange || !isSelectable ? "opacity-35" : "",
+                  cell.date === selectedDate ? "ring-2 ring-amber-500" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+
+                const label = `${formatLongDate(cell.date)}: ${formatProduction(cell.totalWh)}`;
+
+                return (
+                  <button
+                    key={cell.date}
+                    type="button"
+                    className={className}
+                    onClick={() => isSelectable && onSelectDate(cell.date)}
+                    disabled={!isSelectable}
+                    onPointerEnter={e => showTooltip(e, label)}
+                    onPointerMove={e => showTooltip(e, label)}
+                    onPointerLeave={hideTooltip}
+                    aria-pressed={cell.date === selectedDate}
+                    aria-label={label}
+                  />
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        </div>
+      </div>
+      {tooltip && (
+        <span
+          className="pointer-events-none fixed z-50 rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-gray-100 whitespace-nowrap"
+          style={{ left: tooltip.x, top: tooltip.y - 28 }}
+        >
+          {tooltip.text}
+        </span>
+      )}
+    </>
   );
 }

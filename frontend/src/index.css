@@ -41,18 +41,11 @@
   margin: 0 auto;
   max-width: 1126px;
   min-height: 100svh;
-  border-inline: 1px solid rgba(219, 228, 234, 0.9);
-}
-
-.dark #root {
-  border-inline-color: rgba(42, 50, 68, 0.9);
 }
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 28%),
-    linear-gradient(180deg, #eef2f5 0%, #e8edf1 100%);
+  background: #ffffff;
   color: var(--text);
   font-family: var(--sans);
   font-size: 18px;
@@ -65,9 +58,7 @@ body {
 }
 
 .dark body {
-  background:
-    radial-gradient(circle at top left, rgba(30, 38, 58, 0.86), transparent 28%),
-    linear-gradient(180deg, #141824 0%, #1a1f2e 100%);
+  background: #1a1f2e;
 }
 
 @media (max-width: 1024px) {

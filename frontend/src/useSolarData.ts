@@ -55,10 +55,23 @@ export function useSolarData() {
     error: null,
   });
 
-  const [date, setDateState] = useState<string>("");
+  function readDateFromURL(): string {
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
+    if (/^\d{4}-\d{2}-\d{2}$/.test(path)) return path;
+    return "";
+  }
+
+  const [date, setDateState] = useState<string>(readDateFromURL);
 
   const setDate = useCallback((d: string) => {
     setDateState(d);
+    window.history.replaceState(null, "", `/${d}`);
+  }, []);
+
+  useEffect(() => {
+    const onPop = () => setDateState(readDateFromURL());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   const fetchHistory = useCallback(() => {
@@ -89,6 +102,14 @@ export function useSolarData() {
   }, [fetchHistory]);
 
   useInterval(fetchHistory, REFETCH_INTERVAL);
+
+  useEffect(() => {
+    if (!date) return;
+    const expected = `/${date}`;
+    if (window.location.pathname !== expected) {
+      window.history.replaceState(null, "", expected);
+    }
+  }, [date]);
 
   useEffect(() => {
     if (!date) return;

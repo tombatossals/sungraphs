@@ -14,4 +14,5 @@ export interface DailyData {
 export interface HistoryEntry {
   date: string;
   total_wh: number;
+  inverters?: Record<string, number>;
 }

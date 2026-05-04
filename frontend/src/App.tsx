@@ -1,223 +1,36 @@
 import Header from "./components/Header";
-import DailyChart from "./components/DailyChart";
-import HistoryChart from "./components/HistoryChart";
 import ProductionHeatmap from "./components/ProductionHeatmap";
-import { ChartSkeleton, StatCardSkeleton, SummarySkeleton, HeatmapSkeleton } from "./components/Skeleton";
+import InverterStats from "./components/InverterStats";
 import { useSolarData } from "./useSolarData";
-import { formatProduction, formatDisplayDate, formatCO2 } from "./format";
-
-const chartCardClassName = [
-  "min-h-[300px] rounded-[26px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-4",
-  "shadow-[0_24px_60px_rgba(148,163,184,0.16),inset_0_1px_0_rgba(255,255,255,0.9)]",
-  "md:min-h-[360px] md:p-6"
-].join(" ");
-
-const statCardClassName = [
-  "rounded-[22px] border border-[color:var(--panel-border)] bg-[color:var(--panel-muted)] px-4 py-3",
-  "text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
-].join(" ");
-
-const CO2_FACTOR = 0.25;
-const TREE_SEQUESTRATION = 21;
-
-function computeCO2(totalWh: number | null): number | null {
-  if (typeof totalWh !== "number" || totalWh <= 0) return null;
-  return (totalWh / 1000) * CO2_FACTOR;
-}
 
 export default function App() {
   const {
-    daily,
-    dailyLoading,
-    dailyError,
     history,
     historyLoading,
     historyError,
     date,
     setDate,
     selectedHistoryEntry,
-    averageWh,
-    bestDay,
-    lastUpdated,
   } = useSolarData();
-
-  const totalWh = history.reduce((s, e) => s + e.total_wh, 0);
-  const totalCO2 = totalWh > 0 ? computeCO2(totalWh) : null;
-  const treeEquiv = totalCO2 !== null ? Math.round(totalCO2 / TREE_SEQUESTRATION) : null;
 
   return (
     <>
       <Header />
-      <div className="px-4 pb-5 md:px-6 md:pb-7">
-        <section className="rounded-[32px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-5 text-left shadow-[0_30px_70px_rgba(148,163,184,0.16),inset_0_1px_0_rgba(255,255,255,0.92)] md:p-7">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="max-w-[34rem]">
-              <h1 className="text-[40px] font-medium tracking-[-0.06em] text-[color:var(--text-h)] md:text-[56px]">
-                Producción solar
-              </h1>
-            <p className="mt-3 max-w-[28rem] text-[0.98rem] leading-7 text-[color:var(--text)]">
-              Un panel limpio para revisar producción diaria, tendencia histórica y elegir fechas con una vista de calendario continua.
-            </p>
-            {lastUpdated && (
-              <p className="mt-2 text-xs text-[color:var(--text-soft)]">
-                Actualizado: {lastUpdated}
-              </p>
-            )}
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3 md:min-w-[28rem] md:flex-1">
-            {historyLoading ? (
-              <>
-                <StatCardSkeleton />
-                <StatCardSkeleton />
-                <StatCardSkeleton />
-              </>
-            ) : (
-              <>
-                <div className={statCardClassName}>
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-                    Día seleccionado
-                  </p>
-                  <p className="mt-3 text-[1.7rem] font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                    {formatProduction(selectedHistoryEntry?.total_wh)}
-                  </p>
-                  <p className="mt-1 text-sm text-[color:var(--text)]">
-                    {selectedHistoryEntry ? formatDisplayDate(selectedHistoryEntry.date) : "Sin selección"}
-                  </p>
-                </div>
-
-                <div className={statCardClassName}>
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-                    Media diaria
-                  </p>
-                  <p className="mt-3 text-[1.7rem] font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                    {formatProduction(averageWh)}
-                  </p>
-                  <p className="mt-1 text-sm text-[color:var(--text)]">
-                    {history.length} días registrados
-                  </p>
-                </div>
-
-                <div className={statCardClassName}>
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-                    Mejor jornada
-                  </p>
-                  <p className="mt-3 text-[1.7rem] font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                    {formatProduction(bestDay?.total_wh)}
-                  </p>
-                  <p className="mt-1 text-sm text-[color:var(--text)]">
-                    {bestDay ? formatDisplayDate(bestDay.date) : "Sin histórico"}
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <div className="w-4/5 mx-auto flex flex-col gap-y-2 pb-6">
         {historyLoading ? (
-          <>
-            <HeatmapSkeleton />
-            <SummarySkeleton />
-          </>
+          <p className="p-4 text-center text-sm text-[color:var(--text-soft)]">Cargando...</p>
         ) : historyError ? (
-          <div className="rounded-[30px] border border-red-200 bg-red-50 px-5 py-6 text-center text-sm text-red-700 md:col-span-2 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-            {historyError}
-          </div>
+          <p className="p-4 text-center text-sm text-red-600">{historyError}</p>
         ) : (
-          <>
-            {history.length > 0 && (
-              <ProductionHeatmap
-                data={history}
-                selectedDate={date}
-                onSelectDate={setDate}
-              />
-            )}
-
-            <section className="rounded-[30px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-5 text-left shadow-[0_24px_60px_rgba(148,163,184,0.14),inset_0_1px_0_rgba(255,255,255,0.85)] md:p-6">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-                Resumen
-              </p>
-              <div className="mt-5 space-y-4">
-                <div className="rounded-[20px] border border-[color:var(--panel-border)] bg-[color:var(--panel-muted)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
-                  <p className="text-sm text-[color:var(--text-soft)]">Fecha activa</p>
-                  <p className="mt-2 text-2xl font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                    {selectedHistoryEntry ? formatDisplayDate(selectedHistoryEntry.date) : "Sin datos"}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[color:var(--text)]">
-                    El mapa de calor funciona como selector principal y mantiene el detalle diario sincronizado con el histórico.
-                  </p>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-[20px] border border-[color:var(--panel-border)] bg-white/70 p-4 dark:bg-[color:var(--panel-muted)]">
-                    <p className="text-sm text-[color:var(--text-soft)]">Cobertura</p>
-                    <p className="mt-2 text-xl font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                      {history.length} días
-                    </p>
-                  </div>
-                  <div className="rounded-[20px] border border-[color:var(--panel-border)] bg-white/70 p-4 dark:bg-[color:var(--panel-muted)]">
-                    <p className="text-sm text-[color:var(--text-soft)]">Pico histórico</p>
-                    <p className="mt-2 text-xl font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                      {formatProduction(bestDay?.total_wh)}
-                    </p>
-                  </div>
-                </div>
-
-                {totalCO2 !== null && treeEquiv !== null && (
-                  <div className="rounded-[20px] border border-[color:var(--panel-border)] bg-[color:var(--panel-muted)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
-                    <p className="text-sm text-[color:var(--text-soft)]">Impacto ambiental</p>
-                    <p className="mt-2 text-2xl font-medium tracking-[-0.04em] text-[color:var(--text-h)]">
-                      {formatCO2(totalCO2)} CO₂ evitados
-                    </p>
-                    <p className="mt-1 text-sm text-[color:var(--text)]">
-                      Equivale a {treeEquiv} árbol{treeEquiv !== 1 ? "es" : ""} plantado{treeEquiv !== 1 ? "s" : ""} al año
-                    </p>
-                  </div>
-                )}
-              </div>
-            </section>
-          </>
+          history.length > 0 && (
+            <ProductionHeatmap
+              data={history}
+              selectedDate={date}
+              onSelectDate={setDate}
+            />
+          )
         )}
-      </div>
-
-      {dailyError && (
-        <p className="mt-5 rounded-[18px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-          {dailyError}
-        </p>
-      )}
-
-      {dailyLoading && (
-        <section className="mt-7">
-          <h2 className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-            Detalle diario
-          </h2>
-          <ChartSkeleton />
-        </section>
-      )}
-
-      {daily && (
-        <section className="mt-7">
-          <h2 className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-            Detalle diario
-          </h2>
-          <div className={chartCardClassName}>
-            <DailyChart data={daily} />
-          </div>
-        </section>
-      )}
-
-      {history.length > 0 && (
-        <section className="mt-7">
-          <h2 className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[color:var(--text-soft)]">
-            Histórico
-          </h2>
-          <div className={chartCardClassName}>
-            <HistoryChart data={history} />
-          </div>
-        </section>
-      )}
+        <InverterStats entry={selectedHistoryEntry} />
       </div>
     </>
   );

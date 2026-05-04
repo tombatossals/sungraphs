@@ -2,12 +2,12 @@ import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
+    <header className="flex items-center justify-between px-4 md:px-6 h-[10vh] min-h-[60px]">
       <div className="flex items-center gap-3">
-        <img src="/sun.png" alt="Sol" className="size-8 md:size-9" />
+        <img src="/sun.png" alt="Sol" className="size-18 md:size-24" />
         <h1
-          className="text-2xl tracking-widest text-[color:var(--text-h)] md:text-3xl"
-          style={{ fontFamily: "'VT323', monospace" }}
+          className="text-4xl md:text-5xl tracking-[-0.03em] text-[color:var(--text-h)]"
+          style={{ fontFamily: "'Bebas Neue', sans-serif" }}
         >
           Solar
         </h1>
