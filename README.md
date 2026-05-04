@@ -5,11 +5,11 @@ Monitor solar personal para microinversores **APSystems EZ1**. Colecta datos de 
 ## Arquitectura
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌──────────────────┐
+┌──────────────────┐     ┌───────────────┐     ┌───────────────────┐
 │  collect.py      │ ──► │  data/*.json  │ ──► │  Frontend React   │
 │  (cada 10 min)   │     │  history.json │     │  (Chart.js +      │
-│                  │     │              │     │   Tailwind CSS)   │
-└─────────────────┘     └──────────────┘     └──────────────────┘
+│                  │     │               │     │   Tailwind CSS)   │
+└──────────────────┘     └───────────────┘     └───────────────────┘
          ▲                        │
          │                   git commit + push
     APSystems EZ1                 │
