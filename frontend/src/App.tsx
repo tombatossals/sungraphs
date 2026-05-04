@@ -1,4 +1,4 @@
-import ThemeToggle from "./components/ThemeToggle";
+import Header from "./components/Header";
 import DailyChart from "./components/DailyChart";
 import HistoryChart from "./components/HistoryChart";
 import ProductionHeatmap from "./components/ProductionHeatmap";
@@ -46,19 +46,15 @@ export default function App() {
   const treeEquiv = totalCO2 !== null ? Math.round(totalCO2 / TREE_SEQUESTRATION) : null;
 
   return (
-    <div className="px-4 py-5 md:px-6 md:py-7">
-      <section className="rounded-[32px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-5 text-left shadow-[0_30px_70px_rgba(148,163,184,0.16),inset_0_1px_0_rgba(255,255,255,0.92)] md:p-7">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-          <div className="max-w-[34rem]">
-            <div className="flex items-center gap-3">
-              <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-[color:var(--text-soft)]">
-                Monitor solar
-              </p>
-              <ThemeToggle />
-            </div>
-            <h1 className="text-[40px] font-medium tracking-[-0.06em] text-[color:var(--text-h)] md:text-[56px]">
-              Producción solar
-            </h1>
+    <>
+      <Header />
+      <div className="px-4 pb-5 md:px-6 md:pb-7">
+        <section className="rounded-[32px] border border-[color:var(--panel-border)] bg-[color:var(--panel)] p-5 text-left shadow-[0_30px_70px_rgba(148,163,184,0.16),inset_0_1px_0_rgba(255,255,255,0.92)] md:p-7">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-[34rem]">
+              <h1 className="text-[40px] font-medium tracking-[-0.06em] text-[color:var(--text-h)] md:text-[56px]">
+                Producción solar
+              </h1>
             <p className="mt-3 max-w-[28rem] text-[0.98rem] leading-7 text-[color:var(--text)]">
               Un panel limpio para revisar producción diaria, tendencia histórica y elegir fechas con una vista de calendario continua.
             </p>
@@ -222,6 +218,7 @@ export default function App() {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </>
   );
 }
