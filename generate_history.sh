@@ -12,5 +12,7 @@ DATE_STR=$(date -d "$DATE_ARG" "+%Y-%m-%d")
 echo "$BASE_DIR/.venv/bin/python" generate_history.py "$DATE_STR"
 
 git add -A
-git commit -q -m "data: history $DATE_STR"
-git push -q
+if [ -n "$(git status --porcelain)" ]; then
+  git commit -q -m "data: history $DATE_STR"
+  git push -q
+fi
