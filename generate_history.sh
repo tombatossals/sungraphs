@@ -9,5 +9,5 @@ cd "$BASE_DIR"
 "$BASE_DIR/.venv/bin/python" generate_history.py $(date "+%Y-%m-%d")
 
 git add -A
-git commit -q -m "up"
+git commit -q -m "data: history $(date '+%Y-%m-%d')"
 git push -q
