@@ -92,12 +92,18 @@ def collect_victron(broker_ip, listen_seconds=5):
 
     battery_power_raw = get_value(values, topic_path("system/0/Dc/Battery/Power"))
     battery_w = -battery_power_raw if battery_power_raw is not None else None
+    battery_v = get_value(values, topic_path("system/0/Dc/Battery/Voltage"))
+    battery_a = get_value(values, topic_path("system/0/Dc/Battery/Current"))
+    battery_soc = get_value(values, topic_path("battery/512/Soc"))
 
     return {
         "grid_w": round(grid_w or 0, 1),
         "load_w": round(load_w or 0, 1),
         "pv_w": round(pv_w or 0, 1),
         "battery_w": round(battery_w or 0, 1),
+        "battery_v": round(battery_v or 0, 2),
+        "battery_a": round(battery_a or 0, 2),
+        "battery_soc": round(battery_soc or 0, 1),
     }
 
 
@@ -149,6 +155,9 @@ async def main():
         "consumo": "load_w",
         "fv": "pv_w",
         "bateria": "battery_w",
+        "bateria-tensao": "battery_v",
+        "bateria-corrente": "battery_a",
+        "bateria-soc": "battery_soc",
     }
 
     for name, vc in victron_units.items():
