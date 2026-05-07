@@ -1,5 +1,5 @@
 export interface Interval {
-  timestamp_iso: string;
+  iso_time: string;
   p1?: number;
   p2?: number;
   total_w?: number;

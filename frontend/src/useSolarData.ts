@@ -3,30 +3,31 @@ import type { DailyData, HistoryEntry } from "./types";
 
 const DAILY_DATA_BASE_URL = "https://api.micronautas.com/sungraphs";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
+const INVERTER_IDS = ["apsystems1", "apsystems2", "apsystems3"];
 
-function getDailyDataUrl(date: string) {
-  return `${DAILY_DATA_BASE_URL}/apsystems1-${date}.json`;
+function getDailyDataUrl(inverterId: string, date: string) {
+  return `${DAILY_DATA_BASE_URL}/${inverterId}-${date}.json`;
 }
 
 interface DailyState {
-  data: DailyData | null;
+  data: Record<string, DailyData>;
   loading: boolean;
   error: string | null;
 }
 
 type DailyAction =
   | { type: "fetch" }
-  | { type: "success"; data: DailyData }
+  | { type: "success"; data: Record<string, DailyData> }
   | { type: "error"; message: string };
 
 function dailyReducer(_state: DailyState, action: DailyAction): DailyState {
   switch (action.type) {
     case "fetch":
-      return { data: null, loading: true, error: null };
+      return { data: {}, loading: true, error: null };
     case "success":
       return { data: action.data, loading: false, error: null };
     case "error":
-      return { data: null, loading: false, error: action.message };
+      return { data: {}, loading: false, error: action.message };
   }
 }
 
@@ -50,7 +51,7 @@ export function useSolarData() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   const [daily, dispatch] = useReducer(dailyReducer, {
-    data: null,
+    data: {},
     loading: false,
     error: null,
   });
@@ -117,12 +118,18 @@ export function useSolarData() {
     const controller = new AbortController();
     dispatch({ type: "fetch" });
 
-    fetch(getDailyDataUrl(date), { signal: controller.signal })
-      .then(r => {
+    Promise.all(
+      INVERTER_IDS.map(async (id) => {
+        const r = await fetch(getDailyDataUrl(id, date), { signal: controller.signal });
         if (!r.ok) throw new Error(`No se pudieron cargar los datos para ${date}.`);
-        return r.json() as Promise<DailyData>;
+        return { id, data: (await r.json()) as DailyData };
       })
-      .then(data => dispatch({ type: "success", data }))
+    )
+      .then(results => {
+        const record: Record<string, DailyData> = {};
+        results.forEach(({ id, data }) => { record[id] = data; });
+        dispatch({ type: "success", data: record });
+      })
       .catch(err => {
         if (err.name !== "AbortError") {
           dispatch({ type: "error", message: err.message });
@@ -140,7 +147,7 @@ export function useSolarData() {
     !best || e.total_wh > best.total_wh ? e : best, null);
 
   return {
-    daily: daily.data,
+    dailyData: daily.data,
     dailyLoading: daily.loading,
     dailyError: daily.error,
     history,

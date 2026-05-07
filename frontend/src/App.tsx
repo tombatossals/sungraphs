@@ -8,6 +8,7 @@ export default function App() {
     history,
     historyLoading,
     historyError,
+    dailyData,
     date,
     setDate,
     selectedHistoryEntry,
@@ -30,7 +31,7 @@ export default function App() {
             />
           )
         )}
-        <InverterStats entry={selectedHistoryEntry} />
+        <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} />
       </div>
     </>
   );

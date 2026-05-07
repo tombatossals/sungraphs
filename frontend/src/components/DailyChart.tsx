@@ -34,7 +34,7 @@ export default function DailyChart({ data }: Props) {
       typeof interval.p2 === "number"
   );
 
-  const labels = intervals.map(i => i.timestamp_iso.slice(11, 16));
+  const labels = intervals.map(i => i.iso_time.slice(11, 16));
 
   const chartData = {
     labels,
