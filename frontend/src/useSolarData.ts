@@ -57,8 +57,9 @@ export function useSolarData() {
   });
 
   function readDateFromURL(): string {
-    const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
-    if (/^\d{4}-\d{2}-\d{2}$/.test(path)) return path;
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get("date");
+    if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
     return "";
   }
 
@@ -66,7 +67,9 @@ export function useSolarData() {
 
   const setDate = useCallback((d: string) => {
     setDateState(d);
-    window.history.replaceState(null, "", `/${d}`);
+    const url = new URL(window.location.href);
+    url.searchParams.set("date", d);
+    window.history.replaceState(null, "", url.pathname + url.search);
   }, []);
 
   useEffect(() => {
@@ -106,9 +109,10 @@ export function useSolarData() {
 
   useEffect(() => {
     if (!date) return;
-    const expected = `/${date}`;
-    if (window.location.pathname !== expected) {
-      window.history.replaceState(null, "", expected);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("date") !== date) {
+      params.set("date", date);
+      window.history.replaceState(null, "", window.location.pathname + "?" + params.toString());
     }
   }, [date]);
 
