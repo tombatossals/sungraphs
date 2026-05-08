@@ -13,4 +13,4 @@ git commit -q -m "data: collect $(date '+%Y-%m-%d %H:%M')"
 git push -q
 
 cd frontend
-npm run build -s
+npm run build -s 2>&1 >/dev/null
