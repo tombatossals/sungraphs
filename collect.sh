@@ -11,3 +11,6 @@ cd "$BASE_DIR"
 git add -A
 git commit -q -m "data: collect $(date '+%Y-%m-%d %H:%M')"
 git push -q
+
+cd frontend
+npm run build
