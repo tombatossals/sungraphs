@@ -1,12 +1,13 @@
 import { useEffect, useState, useCallback, useReducer, useRef } from "react";
 import type { DailyData, HistoryEntry } from "./types";
 
-const DAILY_DATA_BASE_URL = "https://api.micronautas.com/sungraphs";
+const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
 const INVERTER_IDS = ["apsystems1", "apsystems2", "apsystems3"];
+const VICTRON_IDS = ["victron1-bateria", "victron1-consumo", "victron1-fv", "victron1-red"];
 
-function getDailyDataUrl(inverterId: string, date: string) {
-  return `${DAILY_DATA_BASE_URL}/${inverterId}-${date}.json`;
+function getDailyDataUrl(id: string, date: string) {
+  return `${DAILY_DATA_BASE_URL}/${id}-${date}.json`;
 }
 
 interface DailyState {
@@ -122,16 +123,23 @@ export function useSolarData() {
     const controller = new AbortController();
     dispatch({ type: "fetch" });
 
+    const allIds = [...INVERTER_IDS, ...VICTRON_IDS];
+
     Promise.all(
-      INVERTER_IDS.map(async (id) => {
+      allIds.map(async (id) => {
         const r = await fetch(getDailyDataUrl(id, date), { signal: controller.signal });
-        if (!r.ok) throw new Error(`No se pudieron cargar los datos para ${date}.`);
+        if (!r.ok) {
+          return { id, data: null };
+        }
         return { id, data: (await r.json()) as DailyData };
       })
     )
       .then(results => {
         const record: Record<string, DailyData> = {};
-        results.forEach(({ id, data }) => { record[id] = data; });
+        results.forEach(({ id, data }) => { if (data) record[id] = data; });
+        if (Object.keys(record).length === 0) {
+          throw new Error(`No se pudieron cargar los datos para ${date}.`);
+        }
         dispatch({ type: "success", data: record });
       })
       .catch(err => {

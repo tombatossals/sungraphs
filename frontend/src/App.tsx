@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import ProductionHeatmap from "./components/ProductionHeatmap";
 import InverterStats from "./components/InverterStats";
+import VictronStats from "./components/VictronStats";
 import { useSolarData } from "./useSolarData";
 
 export default function App() {
@@ -32,6 +33,9 @@ export default function App() {
           )
         )}
         <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} />
+        {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-")) && (
+          <VictronStats dailyData={dailyData} />
+        )}
       </div>
     </>
   );

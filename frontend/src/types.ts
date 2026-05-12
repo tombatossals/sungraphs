@@ -3,6 +3,7 @@ export interface Interval {
   p1?: number;
   p2?: number;
   total_w?: number;
+  value?: number;
   error?: boolean;
 }
 
