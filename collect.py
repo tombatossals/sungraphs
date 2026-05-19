@@ -48,6 +48,14 @@ def round_value(value):
     return round(value, 2)
 
 
+def mark_error(interval, exc):
+    interval["error"] = True
+    interval["error_type"] = type(exc).__name__
+    message = str(exc)
+    if message:
+        interval["error_message"] = message
+
+
 def collect_victron(broker_ip, listen_seconds=5):
     values = defaultdict(lambda: None)
 
@@ -124,6 +132,8 @@ async def main():
 
         try:
             response = await inverter.get_output_data()
+            if response is None:
+                raise TimeoutError("No response from inverter")
 
             data["totals"] = {
                 "p1": round_value(response.e1 * 1000),
@@ -137,8 +147,8 @@ async def main():
                 }
             )
 
-        except Exception:
-            data["intervals"][slot]["error"] = True
+        except Exception as exc:
+            mark_error(data["intervals"][slot], exc)
 
         save_json(filepath, data)
 
@@ -161,10 +171,14 @@ async def main():
     }
 
     for name, vc in victron_units.items():
+        victron_error = None
         try:
             snapshot = await asyncio.to_thread(collect_victron, vc["ip"])
-        except Exception:
+            if snapshot is None:
+                raise TimeoutError("No MQTT values received from Victron")
+        except Exception as exc:
             snapshot = None
+            victron_error = exc
 
         for metric_name, key in VICTRON_METRICS.items():
             filepath = get_filepath(f"{name}-{metric_name}")
@@ -174,7 +188,10 @@ async def main():
             }
 
             if snapshot is None or snapshot.get(key) is None:
-                data["intervals"][slot]["error"] = True
+                mark_error(
+                    data["intervals"][slot],
+                    victron_error or KeyError(f"Missing Victron metric {key}"),
+                )
             else:
                 data["intervals"][slot]["value"] = snapshot[key]
 
