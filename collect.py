@@ -159,6 +159,7 @@ async def main():
                 {
                     "p1": round_value(response.p1),
                     "p2": round_value(response.p2),
+                    "total_w": round_value(response.p1 + response.p2),
                 }
             )
 

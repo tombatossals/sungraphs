@@ -36,7 +36,15 @@ export default function InverterDailyChart({ data, color, getValue }: Props) {
     return typeof interval.p1 === "number" && typeof interval.p2 === "number";
   });
 
-  if (intervals.length === 0) return null;
+  if (intervals.length === 0) {
+    return (
+      <div className="h-32 flex items-center justify-center">
+        <span className="text-xs" style={{ color: "var(--text-soft)" }}>
+          Sin datos válidos
+        </span>
+      </div>
+    );
+  }
 
   const labels = intervals.map(i => i.iso_time.slice(11, 16));
   const values = intervals.map(i => getValue ? (getValue(i) ?? 0) : (i.p1 ?? 0) + (i.p2 ?? 0));
