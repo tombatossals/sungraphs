@@ -48,6 +48,12 @@ def round_value(value):
     return round(value, 2)
 
 
+def round_optional(value, digits):
+    if value is None:
+        return None
+    return round(value, digits)
+
+
 def mark_error(interval, exc):
     interval["error"] = True
     interval["error_type"] = type(exc).__name__
@@ -72,19 +78,28 @@ def collect_victron(broker_ip, listen_seconds=5):
     client.connect(broker_ip, 1883)
     client.subscribe("N/#")
     client.loop_start()
+
+    portal_id = None
+    deadline = time.monotonic() + listen_seconds
+    while time.monotonic() < deadline:
+        for topic in values.keys():
+            parts = topic.split("/")
+            if len(parts) > 1:
+                portal_id = parts[1]
+                break
+        if portal_id:
+            break
+        time.sleep(0.1)
+
+    if not portal_id:
+        client.loop_stop()
+        client.disconnect()
+        return None
+
+    client.publish(f"R/{portal_id}/keepalive", "")
     time.sleep(listen_seconds)
     client.loop_stop()
     client.disconnect()
-
-    portal_id = None
-    for t in values.keys():
-        parts = t.split("/")
-        if len(parts) > 1:
-            portal_id = parts[1]
-            break
-
-    if not portal_id:
-        return None
 
     def topic_path(path):
         return f"N/{portal_id}/{path}"
@@ -105,13 +120,13 @@ def collect_victron(broker_ip, listen_seconds=5):
     battery_soc = get_value(values, topic_path("battery/512/Soc"))
 
     return {
-        "grid_w": round(grid_w or 0, 1),
-        "load_w": round(load_w or 0, 1),
-        "pv_w": round(pv_w or 0, 1),
-        "battery_w": round(battery_w or 0, 1),
-        "battery_v": round(battery_v or 0, 2),
-        "battery_a": round(battery_a or 0, 2),
-        "battery_soc": round(battery_soc or 0, 1),
+        "grid_w": round_optional(grid_w, 1),
+        "load_w": round_optional(load_w, 1),
+        "pv_w": round_optional(pv_w, 1),
+        "battery_w": round_optional(battery_w, 1),
+        "battery_v": round_optional(battery_v, 2),
+        "battery_a": round_optional(battery_a, 2),
+        "battery_soc": round_optional(battery_soc, 1),
     }
 
 
@@ -165,8 +180,8 @@ async def main():
         "consumo": "load_w",
         "fv": "pv_w",
         "bateria": "battery_w",
-        "bateria-tensao": "battery_v",
-        "bateria-corrente": "battery_a",
+        "bateria-tension": "battery_v",
+        "bateria-corriente": "battery_a",
         "bateria-soc": "battery_soc",
     }
 
