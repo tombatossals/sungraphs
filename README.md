@@ -45,7 +45,21 @@ cd frontend && npm run build
 
 ## Configuración
 
-`config.json` — lista de inversores con sus direcciones IP en la LAN.
+`config.toml` — lista de dispositivos con sus direcciones IP en la LAN y, para
+dispositivos Victron, las muestras MQTT que se quieren guardar. Cada muestra
+genera un JSON diario con el nombre `<dispositivo>-<muestra>-YYYY-MM-DD.json`.
+
+Ejemplo de muestra Victron:
+
+```toml
+[[devices.samples]]
+id = "fv"
+topics = [
+  "system/0/Ac/PvOnOutput/L1/Power",
+  "pvinverter/31/Ac/Power",
+]
+digits = 1
+```
 
 ## Licencia
 

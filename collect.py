@@ -2,6 +2,7 @@ from APsystemsEZ1 import APsystemsEZ1M
 import asyncio
 import json
 import os
+import tomllib
 from datetime import datetime
 from collections import defaultdict
 import paho.mqtt.client as mqtt
@@ -9,9 +10,96 @@ import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
+CONFIG_TOML = os.path.join(BASE_DIR, "config.toml")
+CONFIG_JSON = os.path.join(BASE_DIR, "config.json")
 
-with open("config.json") as f:
-    config = json.load(f)
+DEFAULT_VICTRON_SAMPLES = [
+    {
+        "id": "red",
+        "topics": ["system/0/Ac/Grid/L1/Power"],
+        "digits": 1,
+    },
+    {
+        "id": "consumo",
+        "topics": ["system/0/Ac/Consumption/L1/Power"],
+        "digits": 1,
+    },
+    {
+        "id": "fv",
+        "topics": [
+            "system/0/Ac/PvOnOutput/L1/Power",
+            "pvinverter/31/Ac/Power",
+        ],
+        "digits": 1,
+    },
+    {
+        "id": "bateria",
+        "topics": ["system/0/Dc/Battery/Power"],
+        "multiplier": -1,
+        "digits": 1,
+    },
+    {
+        "id": "bateria-tension",
+        "topics": ["system/0/Dc/Battery/Voltage"],
+        "digits": 2,
+    },
+    {
+        "id": "bateria-corriente",
+        "topics": ["system/0/Dc/Battery/Current"],
+        "digits": 2,
+    },
+    {
+        "id": "bateria-soc",
+        "topics": ["battery/512/Soc"],
+        "digits": 1,
+    },
+]
+
+
+def load_config():
+    if os.path.exists(CONFIG_TOML):
+        with open(CONFIG_TOML, "rb") as f:
+            return tomllib.load(f)
+
+    with open(CONFIG_JSON) as f:
+        legacy_config = json.load(f)
+
+    devices = []
+    for name, inverter_config in legacy_config.get("inversores", {}).items():
+        devices.append(
+            {
+                "id": name,
+                "type": inverter_config.get("type", "apsystems"),
+                "ip": inverter_config["ip"],
+                "port": inverter_config.get("port", 8050),
+            }
+        )
+
+    victron_config = legacy_config.get("victron", {})
+    if "ip" in victron_config:
+        devices.append(
+            {
+                "id": "victron",
+                "type": "victron",
+                "ip": victron_config["ip"],
+                "samples": DEFAULT_VICTRON_SAMPLES,
+            }
+        )
+    else:
+        for name, unit_config in victron_config.items():
+            devices.append(
+                {
+                    "id": name,
+                    "type": "victron",
+                    "ip": unit_config["ip"],
+                    "samples": DEFAULT_VICTRON_SAMPLES,
+                }
+            )
+
+    return {"devices": devices}
+
+
+config = load_config()
 
 
 def get_time_slot():
@@ -62,7 +150,25 @@ def mark_error(interval, exc):
         interval["error_message"] = message
 
 
-def collect_victron(broker_ip, listen_seconds=5):
+def get_sample_topics(sample):
+    if "topics" in sample:
+        return sample["topics"]
+    if "topic" in sample:
+        return [sample["topic"]]
+    return []
+
+
+def get_victron_sample_value(values, portal_id, sample):
+    for topic in get_sample_topics(sample):
+        value = values.get(f"N/{portal_id}/{topic}")
+        if value is not None:
+            multiplier = sample.get("multiplier", 1)
+            digits = sample.get("digits", 1)
+            return round_optional(value * multiplier, digits)
+    return None
+
+
+def collect_victron(broker_ip, samples, listen_seconds=5):
     values = defaultdict(lambda: None)
 
     def on_message(client, userdata, msg):
@@ -101,33 +207,79 @@ def collect_victron(broker_ip, listen_seconds=5):
     client.loop_stop()
     client.disconnect()
 
-    def topic_path(path):
-        return f"N/{portal_id}/{path}"
-
-    def get_value(data, path, default=None):
-        return data.get(path, default)
-
-    grid_w = get_value(values, topic_path("system/0/Ac/Grid/L1/Power"))
-    load_w = get_value(values, topic_path("system/0/Ac/Consumption/L1/Power"))
-    pv_w = get_value(values, topic_path("system/0/Ac/PvOnOutput/L1/Power"))
-    if pv_w is None:
-        pv_w = get_value(values, topic_path("pvinverter/31/Ac/Power"))
-
-    battery_power_raw = get_value(values, topic_path("system/0/Dc/Battery/Power"))
-    battery_w = -battery_power_raw if battery_power_raw is not None else None
-    battery_v = get_value(values, topic_path("system/0/Dc/Battery/Voltage"))
-    battery_a = get_value(values, topic_path("system/0/Dc/Battery/Current"))
-    battery_soc = get_value(values, topic_path("battery/512/Soc"))
-
     return {
-        "grid_w": round_optional(grid_w, 1),
-        "load_w": round_optional(load_w, 1),
-        "pv_w": round_optional(pv_w, 1),
-        "battery_w": round_optional(battery_w, 1),
-        "battery_v": round_optional(battery_v, 2),
-        "battery_a": round_optional(battery_a, 2),
-        "battery_soc": round_optional(battery_soc, 1),
+        sample["id"]: get_victron_sample_value(values, portal_id, sample)
+        for sample in samples
     }
+
+
+async def collect_apsystems(name, device_config, slot):
+    filepath = get_filepath(name)
+    data = load_or_create_json(filepath)
+
+    data["intervals"][slot] = {
+        "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+    }
+
+    inverter = APsystemsEZ1M(device_config["ip"], device_config.get("port", 8050))
+
+    try:
+        response = await inverter.get_output_data()
+        if response is None:
+            raise TimeoutError("No response from inverter")
+
+        data["totals"] = {
+            "p1": round_value(response.e1 * 1000),
+            "p2": round_value(response.e2 * 1000),
+        }
+
+        data["intervals"][slot].update(
+            {
+                "p1": round_value(response.p1),
+                "p2": round_value(response.p2),
+                "total_w": round_value(response.p1 + response.p2),
+            }
+        )
+
+    except Exception as exc:
+        mark_error(data["intervals"][slot], exc)
+
+    save_json(filepath, data)
+
+
+async def collect_victron_device(name, device_config, slot):
+    samples = device_config.get("samples", DEFAULT_VICTRON_SAMPLES)
+    victron_error = None
+    try:
+        snapshot = await asyncio.to_thread(
+            collect_victron,
+            device_config["ip"],
+            samples,
+            device_config.get("listen_seconds", 5),
+        )
+        if snapshot is None:
+            raise TimeoutError("No MQTT values received from Victron")
+    except Exception as exc:
+        snapshot = None
+        victron_error = exc
+
+    for sample in samples:
+        sample_id = sample["id"]
+        filepath = get_filepath(f"{name}-{sample_id}")
+        data = load_or_create_json(filepath)
+        data["intervals"][slot] = {
+            "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+        }
+
+        if snapshot is None or snapshot.get(sample_id) is None:
+            mark_error(
+                data["intervals"][slot],
+                victron_error or KeyError(f"Missing Victron sample {sample_id}"),
+            )
+        else:
+            data["intervals"][slot]["value"] = snapshot[sample_id]
+
+        save_json(filepath, data)
 
 
 async def main():
@@ -135,83 +287,17 @@ async def main():
 
     slot = get_time_slot()
 
-    for name, inverter_config in config["inversores"].items():
-        filepath = get_filepath(name)
-        data = load_or_create_json(filepath)
+    for device_config in config["devices"]:
+        name = device_config["id"]
+        device_type = device_config["type"]
 
-        data["intervals"][slot] = {
-            "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
-        }
-
-        inverter = APsystemsEZ1M(inverter_config["ip"], inverter_config["port"])
-
-        try:
-            response = await inverter.get_output_data()
-            if response is None:
-                raise TimeoutError("No response from inverter")
-
-            data["totals"] = {
-                "p1": round_value(response.e1 * 1000),
-                "p2": round_value(response.e2 * 1000),
-            }
-
-            data["intervals"][slot].update(
-                {
-                    "p1": round_value(response.p1),
-                    "p2": round_value(response.p2),
-                    "total_w": round_value(response.p1 + response.p2),
-                }
-            )
-
-        except Exception as exc:
-            mark_error(data["intervals"][slot], exc)
-
-        save_json(filepath, data)
-
-    victron_config = config.get("victron", {})
-
-    victron_units = {}
-    if "ip" in victron_config:
-        victron_units["victron"] = victron_config
-    else:
-        victron_units = victron_config
-
-    VICTRON_METRICS = {
-        "red": "grid_w",
-        "consumo": "load_w",
-        "fv": "pv_w",
-        "bateria": "battery_w",
-        "bateria-tension": "battery_v",
-        "bateria-corriente": "battery_a",
-        "bateria-soc": "battery_soc",
-    }
-
-    for name, vc in victron_units.items():
-        victron_error = None
-        try:
-            snapshot = await asyncio.to_thread(collect_victron, vc["ip"])
-            if snapshot is None:
-                raise TimeoutError("No MQTT values received from Victron")
-        except Exception as exc:
-            snapshot = None
-            victron_error = exc
-
-        for metric_name, key in VICTRON_METRICS.items():
-            filepath = get_filepath(f"{name}-{metric_name}")
-            data = load_or_create_json(filepath)
-            data["intervals"][slot] = {
-                "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
-            }
-
-            if snapshot is None or snapshot.get(key) is None:
-                mark_error(
-                    data["intervals"][slot],
-                    victron_error or KeyError(f"Missing Victron metric {key}"),
-                )
-            else:
-                data["intervals"][slot]["value"] = snapshot[key]
-
-            save_json(filepath, data)
+        if device_type == "apsystems":
+            await collect_apsystems(name, device_config, slot)
+        elif device_type == "victron":
+            await collect_victron_device(name, device_config, slot)
+        else:
+            raise ValueError(f"Unsupported device type: {device_type}")
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

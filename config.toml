@@ -1,0 +1,62 @@
+[[devices]]
+id = "victron1"
+type = "victron"
+ip = "192.168.5.48"
+listen_seconds = 5
+
+[[devices.samples]]
+id = "red"
+topic = "system/0/Ac/Grid/L1/Power"
+digits = 1
+
+[[devices.samples]]
+id = "consumo"
+topic = "system/0/Ac/Consumption/L1/Power"
+digits = 1
+
+[[devices.samples]]
+id = "fv"
+topics = [
+  "system/0/Ac/PvOnOutput/L1/Power",
+  "pvinverter/31/Ac/Power",
+]
+digits = 1
+
+[[devices.samples]]
+id = "bateria"
+topic = "system/0/Dc/Battery/Power"
+multiplier = -1
+digits = 1
+
+[[devices.samples]]
+id = "bateria-tension"
+topic = "system/0/Dc/Battery/Voltage"
+digits = 2
+
+[[devices.samples]]
+id = "bateria-corriente"
+topic = "system/0/Dc/Battery/Current"
+digits = 2
+
+[[devices.samples]]
+id = "bateria-soc"
+topic = "battery/512/Soc"
+digits = 1
+
+[[devices]]
+id = "apsystems1"
+type = "apsystems"
+ip = "192.168.5.42"
+port = 8050
+
+[[devices]]
+id = "apsystems2"
+type = "apsystems"
+ip = "192.168.5.46"
+port = 8050
+
+[[devices]]
+id = "apsystems3"
+type = "apsystems"
+ip = "192.168.5.43"
+port = 8050
