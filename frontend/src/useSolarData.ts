@@ -4,7 +4,14 @@ import type { DailyData, HistoryEntry } from "./types";
 const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
 const INVERTER_IDS = ["apsystems1", "apsystems2", "apsystems3"];
-const VICTRON_IDS = ["victron1-bateria", "victron1-consumo", "victron1-fv", "victron1-red"];
+const VICTRON_IDS = [
+  "victron1-bateria",
+  "victron1-cargas-criticas",
+  "victron1-cargas-no-criticas",
+  "victron1-consumo",
+  "victron1-fv",
+  "victron1-red",
+];
 
 function getDailyDataUrl(id: string, date: string) {
   return `${DAILY_DATA_BASE_URL}/${id}-${date}.json`;
