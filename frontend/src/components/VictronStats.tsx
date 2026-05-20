@@ -1,8 +1,9 @@
-import type { DailyData, Interval } from "../types";
+import type { DailyData, Interval, SolarMetadata } from "../types";
 import InverterDailyChart from "./InverterDailyChart";
 
 interface Props {
   dailyData: Record<string, DailyData>;
+  metadata: SolarMetadata | null;
 }
 
 const VICTRON_META: Record<string, { label: string; color: string }> = {
@@ -25,15 +26,27 @@ function getValue(interval: Interval): number | null {
   return typeof interval.value === "number" ? interval.value : null;
 }
 
-export default function VictronStats({ dailyData }: Props) {
+function getVictronSampleLabel(metadata: SolarMetadata | null, id: string, fallback: string) {
+  const [deviceId, ...sampleParts] = id.split("-");
+  const sampleId = sampleParts.join("-");
+  const device = metadata?.devices.find(item => item.id === deviceId);
+  return device?.samples?.find(sample => sample.id === sampleId)?.label ?? fallback;
+}
+
+function getVictronDeviceLabel(metadata: SolarMetadata | null) {
+  return metadata?.devices.find(item => item.id === "victron1")?.label ?? "Inversor principal";
+}
+
+export default function VictronStats({ dailyData, metadata }: Props) {
   return (
     <div className="flex flex-col gap-y-3">
       <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-soft)" }}>
-        Inversor principal — Hoy
+        {getVictronDeviceLabel(metadata)} — Hoy
       </h2>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {VICTRON_ORDER.map(id => {
           const meta = VICTRON_META[id];
+          const label = getVictronSampleLabel(metadata, id, meta.label);
           const daily = dailyData[id];
 
           return (
@@ -42,7 +55,7 @@ export default function VictronStats({ dailyData }: Props) {
               className="rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col"
             >
               <span className="text-[0.6rem] font-semibold uppercase tracking-wider mb-1" style={{ color: meta.color }}>
-                {meta.label}
+                {label}
               </span>
               {daily ? (
                 <InverterDailyChart data={daily} color={meta.color} getValue={getValue} />

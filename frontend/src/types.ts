@@ -17,3 +17,19 @@ export interface HistoryEntry {
   total_wh: number;
   inverters?: Record<string, number>;
 }
+
+export interface DeviceSampleMetadata {
+  id: string;
+  label: string;
+}
+
+export interface DeviceMetadata {
+  id: string;
+  type: string;
+  label: string;
+  samples?: DeviceSampleMetadata[];
+}
+
+export interface SolarMetadata {
+  devices: DeviceMetadata[];
+}

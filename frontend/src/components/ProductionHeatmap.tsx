@@ -198,7 +198,7 @@ export default function ProductionHeatmap({ data, selectedDate, onSelectDate }: 
         <span>Más</span>
       </div>
       <div
-        className="border border-[#e1e4e8] p-1.5 md:p-2"
+        className="border border-[color:var(--border)] rounded p-1.5 md:p-2"
       >
         <div className="overflow-x-auto" role="grid" aria-label="Mapa de calor de producción diaria">
         <div className="flex gap-[3px] md:gap-[4px]">

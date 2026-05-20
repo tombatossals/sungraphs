@@ -13,6 +13,7 @@ export default function App() {
     date,
     setDate,
     selectedHistoryEntry,
+    metadata,
   } = useSolarData();
 
   return (
@@ -32,9 +33,9 @@ export default function App() {
             />
           )
         )}
-        <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} />
+        <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} metadata={metadata} />
         {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-")) && (
-          <VictronStats dailyData={dailyData} />
+          <VictronStats dailyData={dailyData} metadata={metadata} />
         )}
       </div>
     </>

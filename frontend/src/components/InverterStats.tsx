@@ -1,9 +1,10 @@
-import type { DailyData, HistoryEntry } from "../types";
+import type { DailyData, HistoryEntry, SolarMetadata } from "../types";
 import InverterDailyChart from "./InverterDailyChart";
 
 interface Props {
   entry: HistoryEntry | null;
   dailyData: Record<string, DailyData>;
+  metadata: SolarMetadata | null;
 }
 
 const INVERTER_META: Record<string, { label: string; color: string }> = {
@@ -21,7 +22,11 @@ function formatWh(value: number): string {
   return `${Math.round(value)} Wh`;
 }
 
-export default function InverterStats({ entry, dailyData }: Props) {
+function getDeviceLabel(metadata: SolarMetadata | null, id: string, fallback: string) {
+  return metadata?.devices.find(device => device.id === id)?.label ?? fallback;
+}
+
+export default function InverterStats({ entry, dailyData, metadata }: Props) {
   if (!entry?.inverters) return null;
 
   const inverters = entry.inverters;
@@ -32,16 +37,17 @@ export default function InverterStats({ entry, dailyData }: Props) {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {INVERTER_ORDER.map(id => {
           const meta = INVERTER_META[id];
+          const label = getDeviceLabel(metadata, id, meta.label);
           const value = inverters[id] ?? 0;
           const pct = total > 0 ? (value / total) * 100 : 0;
 
           return (
             <div
               key={id}
-              className="rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col"
+              className="rounded border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col"
             >
               <span className="text-[0.6rem] font-semibold uppercase tracking-wider" style={{ color: meta.color }}>
-                {meta.label}
+                {label}
               </span>
               <span className="mt-1 text-lg font-semibold tracking-tight" style={{ color: "var(--text-h)" }}>
                 {formatWh(value)}
@@ -58,7 +64,7 @@ export default function InverterStats({ entry, dailyData }: Props) {
             </div>
           );
         })}
-        <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col">
+        <div className="rounded border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col">
           <span className="text-[0.6rem] font-semibold uppercase tracking-wider" style={{ color: "var(--text-soft)" }}>
             Total
           </span>
@@ -76,6 +82,7 @@ export default function InverterStats({ entry, dailyData }: Props) {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {INVERTER_ORDER.map(id => {
           const meta = INVERTER_META[id];
+          const label = getDeviceLabel(metadata, id, meta.label);
           const daily = dailyData[id];
 
           return (
@@ -84,7 +91,7 @@ export default function InverterStats({ entry, dailyData }: Props) {
               className="rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col"
             >
               <span className="text-[0.6rem] font-semibold uppercase tracking-wider mb-1" style={{ color: meta.color }}>
-                {meta.label} — Hoy
+                {label} — Hoy
               </span>
               {daily ? (
                 <InverterDailyChart data={daily} color={meta.color} />

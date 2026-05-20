@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 CONFIG_TOML = os.path.join(BASE_DIR, "config.toml")
 CONFIG_JSON = os.path.join(BASE_DIR, "config.json")
+METADATA_FILE = os.path.join(DATA_DIR, "metadata.json")
 
 DEFAULT_VICTRON_SAMPLES = [
     {
@@ -125,6 +126,27 @@ def load_or_create_json(filename):
 def save_json(filename, data):
     with open(filename, "w") as f:
         json.dump(data, f, indent=2)
+
+
+def save_metadata():
+    metadata = {"devices": []}
+    for device in config["devices"]:
+        device_metadata = {
+            "id": device["id"],
+            "type": device["type"],
+            "label": device.get("label", device["id"]),
+        }
+        if device["type"] == "victron":
+            device_metadata["samples"] = [
+                {
+                    "id": sample["id"],
+                    "label": sample.get("label", sample["id"]),
+                }
+                for sample in device.get("samples", DEFAULT_VICTRON_SAMPLES)
+            ]
+        metadata["devices"].append(device_metadata)
+
+    save_json(METADATA_FILE, metadata)
 
 
 def get_filepath(name):
@@ -284,6 +306,7 @@ async def collect_victron_device(name, device_config, slot):
 
 async def main():
     os.makedirs(DATA_DIR, exist_ok=True)
+    save_metadata()
 
     slot = get_time_slot()
 

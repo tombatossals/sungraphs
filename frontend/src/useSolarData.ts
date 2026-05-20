@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useReducer, useRef } from "react";
-import type { DailyData, HistoryEntry } from "./types";
+import type { DailyData, HistoryEntry, SolarMetadata } from "./types";
 
 const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
@@ -56,6 +56,7 @@ export function useSolarData() {
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [metadata, setMetadata] = useState<SolarMetadata | null>(null);
 
   const [daily, dispatch] = useReducer(dailyReducer, {
     data: {},
@@ -111,6 +112,20 @@ export function useSolarData() {
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
+
+  useEffect(() => {
+    fetch(`/data/metadata.json`)
+      .then(r => {
+        if (!r.ok) return null;
+        return r.json() as Promise<SolarMetadata>;
+      })
+      .then(data => {
+        if (data) setMetadata(data);
+      })
+      .catch(() => {
+        setMetadata(null);
+      });
+  }, []);
 
   useInterval(fetchHistory, REFETCH_INTERVAL);
 
@@ -177,5 +192,6 @@ export function useSolarData() {
     averageWh,
     bestDay,
     lastUpdated,
+    metadata,
   };
 }

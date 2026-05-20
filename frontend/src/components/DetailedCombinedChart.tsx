@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import type { DailyData } from "../types";
+import type { DailyData, SolarMetadata } from "../types";
 import { createLineChartOptions } from "./chartTheme";
 
 ChartJS.register(
@@ -25,6 +25,7 @@ ChartJS.register(
 
 interface Props {
   dailyData: Record<string, DailyData>;
+  metadata?: SolarMetadata | null;
 }
 
 const METRICS = [
@@ -40,7 +41,14 @@ function formatWatts(w: number | null): string {
   return `${w.toFixed(0)} W`;
 }
 
-export default function DetailedCombinedChart({ dailyData }: Props) {
+function getMetricLabel(metadata: SolarMetadata | null | undefined, id: string, fallback: string) {
+  const [deviceId, ...sampleParts] = id.split("-");
+  const sampleId = sampleParts.join("-");
+  const device = metadata?.devices.find(item => item.id === deviceId);
+  return device?.samples?.find(sample => sample.id === sampleId)?.label ?? fallback;
+}
+
+export default function DetailedCombinedChart({ dailyData, metadata }: Props) {
   const timestamps = new Set<string>();
   const series: Record<string, Record<string, number>> = {};
 
@@ -134,7 +142,7 @@ export default function DetailedCombinedChart({ dailyData }: Props) {
   };
 
   const datasets = METRICS.filter(m => series[m.id]).map(m => ({
-    label: m.label,
+    label: getMetricLabel(metadata, m.id, m.label),
     data: sortedTimestamps.map(ts => series[m.id]?.[ts] ?? null),
     borderColor: m.color,
     backgroundColor: `${m.color}18`,
