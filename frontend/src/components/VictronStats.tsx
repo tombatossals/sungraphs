@@ -9,7 +9,6 @@ const VICTRON_META: Record<string, { label: string; color: string }> = {
   "victron1-fv": { label: "Producción FV", color: "#27ae60" },
   "victron1-consumo": { label: "Consumo Casa", color: "#f39c12" },
   "victron1-cargas-criticas": { label: "Cargas críticas", color: "#3498db" },
-  "victron1-cargas-no-criticas": { label: "Cargas no críticas", color: "#d35400" },
   "victron1-red": { label: "Red Eléctrica", color: "#e74c3c" },
   "victron1-bateria": { label: "Batería", color: "#8e44ad" },
 };
@@ -18,7 +17,6 @@ const VICTRON_ORDER = [
   "victron1-fv",
   "victron1-consumo",
   "victron1-cargas-criticas",
-  "victron1-cargas-no-criticas",
   "victron1-red",
   "victron1-bateria",
 ];

@@ -7,7 +7,6 @@ const INVERTER_IDS = ["apsystems1", "apsystems2", "apsystems3"];
 const VICTRON_IDS = [
   "victron1-bateria",
   "victron1-cargas-criticas",
-  "victron1-cargas-no-criticas",
   "victron1-consumo",
   "victron1-fv",
   "victron1-red",

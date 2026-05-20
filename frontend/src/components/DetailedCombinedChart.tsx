@@ -31,7 +31,6 @@ const METRICS = [
   { id: "victron1-fv", label: "Producción FV", color: "#27ae60" },
   { id: "victron1-consumo", label: "Consumo Casa", color: "#f39c12" },
   { id: "victron1-cargas-criticas", label: "Cargas críticas", color: "#3498db" },
-  { id: "victron1-cargas-no-criticas", label: "Cargas no críticas", color: "#d35400" },
   { id: "victron1-red", label: "Red Eléctrica", color: "#e74c3c" },
   { id: "victron1-bateria", label: "Batería", color: "#8e44ad" },
 ];
