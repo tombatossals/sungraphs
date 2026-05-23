@@ -179,6 +179,26 @@ def first_number(*values):
     return None
 
 
+def get_goodwe_mppt_power(section, index):
+    voltage = first_number(section.get(f"vpv{index}"))
+    current = first_number(section.get(f"ipv{index}"))
+    if voltage is None or current is None:
+        return None
+    return voltage * current
+
+
+def split_goodwe_daily_wh(daily_wh, p1, p2):
+    if daily_wh is None:
+        return (0, 0)
+
+    mppt_total = (p1 or 0) + (p2 or 0)
+    if mppt_total <= 0:
+        return (daily_wh, 0)
+
+    p1_daily = daily_wh * (p1 or 0) / mppt_total
+    return (p1_daily, daily_wh - p1_daily)
+
+
 def mark_error(interval, exc):
     interval["error"] = True
     interval["error_type"] = type(exc).__name__
@@ -357,11 +377,21 @@ def get_goodwe_reading(sems_data):
         inverter.get("tempperature"),
         inverter_full.get("tempperature"),
     )
+    mppt1_w = first_number(
+        get_goodwe_mppt_power(inverter_data, 1),
+        get_goodwe_mppt_power(inverter_full, 1),
+    )
+    mppt2_w = first_number(
+        get_goodwe_mppt_power(inverter_data, 2),
+        get_goodwe_mppt_power(inverter_full, 2),
+    )
 
     return {
         "pac": pac,
         "daily_wh": daily_kwh * 1000 if daily_kwh is not None else None,
         "total_kwh": total_kwh,
+        "mppt1_w": mppt1_w,
+        "mppt2_w": mppt2_w,
         "temperature": temperature,
         "status": inverter.get("status", sems_data.get("info", {}).get("status")),
         "sems_time": sems_data.get("info", {}).get("time"),
@@ -394,12 +424,15 @@ async def collect_goodwe_sems(name, device_config, slot):
         if reading["pac"] is None and reading["daily_wh"] is None:
             raise ValueError("No SEMS production values found")
 
-        daily_wh = round_value(reading["daily_wh"] or 0)
+        daily_wh = reading["daily_wh"] or 0
         total_w = round_value(reading["pac"] or 0)
+        p1 = reading["mppt1_w"] if reading["mppt1_w"] is not None else total_w
+        p2 = reading["mppt2_w"] if reading["mppt2_w"] is not None else 0
+        p1_daily, p2_daily = split_goodwe_daily_wh(daily_wh, p1, p2)
 
         data["totals"] = {
-            "p1": daily_wh,
-            "p2": 0,
+            "p1": round_value(p1_daily),
+            "p2": round_value(p2_daily),
         }
         if reading["total_kwh"] is not None:
             data["total_kwh"] = round_value(reading["total_kwh"])
@@ -407,8 +440,8 @@ async def collect_goodwe_sems(name, device_config, slot):
         interval = data["intervals"][slot]
         interval.update(
             {
-                "p1": total_w,
-                "p2": 0,
+                "p1": round_value(p1),
+                "p2": round_value(p2),
                 "total_w": total_w,
             }
         )
