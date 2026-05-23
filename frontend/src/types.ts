@@ -9,6 +9,7 @@ export interface Interval {
 
 export interface DailyData {
   date: string;
+  totals?: Record<string, number>;
   intervals: Record<string, Interval>;
 }
 

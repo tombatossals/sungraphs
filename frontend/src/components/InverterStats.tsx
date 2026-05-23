@@ -8,12 +8,15 @@ interface Props {
 }
 
 const INVERTER_META: Record<string, { label: string; color: string }> = {
+  goodwe1: { label: "GoodWe DNS-5000", color: "#ef6f4e" },
   apsystems1: { label: "Inversor 1", color: "#4f8ff7" },
   apsystems2: { label: "Inversor 2", color: "#f7a84f" },
   apsystems3: { label: "Inversor 3", color: "#59b79d" },
 };
 
-const INVERTER_ORDER = ["apsystems1", "apsystems2", "apsystems3"];
+const FALLBACK_INVERTER_ORDER = ["goodwe1", "apsystems1", "apsystems2", "apsystems3"];
+const PRODUCTION_DEVICE_TYPES = new Set(["apsystems", "goodwe_sems"]);
+const COLORS = ["#ef6f4e", "#4f8ff7", "#f7a84f", "#59b79d", "#8b6fe8", "#4fae7b"];
 
 function formatWh(value: number): string {
   if (value >= 1000) {
@@ -26,17 +29,34 @@ function getDeviceLabel(metadata: SolarMetadata | null, id: string, fallback: st
   return metadata?.devices.find(device => device.id === id)?.label ?? fallback;
 }
 
+function getProductionDeviceIds(metadata: SolarMetadata | null, inverters: Record<string, number>) {
+  const metadataIds = metadata?.devices
+    .filter(device => PRODUCTION_DEVICE_TYPES.has(device.type))
+    .map(device => device.id) ?? [];
+
+  const ids = metadataIds.length > 0 ? metadataIds : FALLBACK_INVERTER_ORDER;
+  const extraIds = Object.keys(inverters).filter(id =>
+    !ids.includes(id) && !id.startsWith("victron")
+  );
+
+  return [...ids, ...extraIds];
+}
+
 export default function InverterStats({ entry, dailyData, metadata }: Props) {
   if (!entry?.inverters) return null;
 
   const inverters = entry.inverters;
   const total = entry.total_wh;
+  const inverterIds = getProductionDeviceIds(metadata, inverters);
 
   return (
     <div className="flex flex-col gap-y-3">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {INVERTER_ORDER.map(id => {
-          const meta = INVERTER_META[id];
+        {inverterIds.map((id, index) => {
+          const meta = INVERTER_META[id] ?? {
+            label: id,
+            color: COLORS[index % COLORS.length],
+          };
           const label = getDeviceLabel(metadata, id, meta.label);
           const value = inverters[id] ?? 0;
           const pct = total > 0 ? (value / total) * 100 : 0;
@@ -80,8 +100,11 @@ export default function InverterStats({ entry, dailyData, metadata }: Props) {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-        {INVERTER_ORDER.map(id => {
-          const meta = INVERTER_META[id];
+        {inverterIds.map((id, index) => {
+          const meta = INVERTER_META[id] ?? {
+            label: id,
+            color: COLORS[index % COLORS.length],
+          };
           const label = getDeviceLabel(metadata, id, meta.label);
           const daily = dailyData[id];
 

@@ -8,6 +8,8 @@ from typing import Any
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 HISTORY_FILE = DATA_DIR / "history.json"
+METADATA_FILE = DATA_DIR / "metadata.json"
+PRODUCTION_DEVICE_TYPES = {"apsystems", "goodwe_sems"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -67,6 +69,19 @@ def get_inverter_total_wh(daily_data: dict[str, Any]) -> float:
     return round(float(p1) + float(p2), 2)
 
 
+def get_production_device_ids() -> set[str] | None:
+    if not METADATA_FILE.exists():
+        return None
+
+    metadata = load_json(METADATA_FILE)
+    devices = metadata.get("devices", [])
+    return {
+        device["id"]
+        for device in devices
+        if device.get("type") in PRODUCTION_DEVICE_TYPES and "id" in device
+    }
+
+
 def build_history_entry(target_date: str) -> dict[str, Any]:
     daily_files = get_daily_files(target_date)
     if not daily_files:
@@ -75,10 +90,13 @@ def build_history_entry(target_date: str) -> dict[str, Any]:
         )
 
     inverter_totals: dict[str, float] = {}
+    production_device_ids = get_production_device_ids()
 
     for path in daily_files:
         daily_data = load_json(path)
         inverter_name = get_inverter_name(path, target_date)
+        if production_device_ids is not None and inverter_name not in production_device_ids:
+            continue
         inverter_totals[inverter_name] = get_inverter_total_wh(daily_data)
 
     return {

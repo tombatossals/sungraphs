@@ -3,7 +3,8 @@ import type { DailyData, HistoryEntry, SolarMetadata } from "./types";
 
 const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
-const INVERTER_IDS = ["apsystems1", "apsystems2", "apsystems3"];
+const PRODUCTION_DEVICE_TYPES = new Set(["apsystems", "goodwe_sems"]);
+const FALLBACK_INVERTER_IDS = ["goodwe1", "apsystems1", "apsystems2", "apsystems3"];
 const VICTRON_IDS = [
   "victron1-bateria",
   "victron1-cargas-criticas",
@@ -14,6 +15,20 @@ const VICTRON_IDS = [
 
 function getDailyDataUrl(id: string, date: string) {
   return `${DAILY_DATA_BASE_URL}/${id}-${date}.json`;
+}
+
+function getDailyIds(metadata: SolarMetadata | null) {
+  if (!metadata) return [...FALLBACK_INVERTER_IDS, ...VICTRON_IDS];
+
+  const ids = metadata.devices.flatMap(device => {
+    if (PRODUCTION_DEVICE_TYPES.has(device.type)) return [device.id];
+    if (device.type === "victron") {
+      return device.samples?.map(sample => `${device.id}-${sample.id}`) ?? [];
+    }
+    return [];
+  });
+
+  return ids.length > 0 ? ids : [...FALLBACK_INVERTER_IDS, ...VICTRON_IDS];
 }
 
 interface DailyState {
@@ -144,7 +159,7 @@ export function useSolarData() {
     const controller = new AbortController();
     dispatch({ type: "fetch" });
 
-    const allIds = [...INVERTER_IDS, ...VICTRON_IDS];
+    const allIds = getDailyIds(metadata);
 
     Promise.all(
       allIds.map(async (id) => {
@@ -170,7 +185,7 @@ export function useSolarData() {
       });
 
     return () => controller.abort();
-  }, [date]);
+  }, [date, metadata]);
 
   const selectedHistoryEntry = history.find(e => e.date === date) ?? null;
   const averageWh = history.length > 0

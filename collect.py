@@ -1,11 +1,9 @@
-from APsystemsEZ1 import APsystemsEZ1M
 import asyncio
 import json
 import os
 import tomllib
 from datetime import datetime
 from collections import defaultdict
-import paho.mqtt.client as mqtt
 import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -164,6 +162,23 @@ def round_optional(value, digits):
     return round(value, digits)
 
 
+def to_float(value):
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def first_number(*values):
+    for value in values:
+        number = to_float(value)
+        if number is not None:
+            return number
+    return None
+
+
 def mark_error(interval, exc):
     interval["error"] = True
     interval["error_type"] = type(exc).__name__
@@ -191,6 +206,8 @@ def get_victron_sample_value(values, portal_id, sample):
 
 
 def collect_victron(broker_ip, samples, listen_seconds=5):
+    import paho.mqtt.client as mqtt
+
     values = defaultdict(lambda: None)
 
     def on_message(client, userdata, msg):
@@ -243,9 +260,10 @@ async def collect_apsystems(name, device_config, slot):
         "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
     }
 
-    inverter = APsystemsEZ1M(device_config["ip"], device_config.get("port", 8050))
-
     try:
+        from APsystemsEZ1 import APsystemsEZ1M
+
+        inverter = APsystemsEZ1M(device_config["ip"], device_config.get("port", 8050))
         response = await inverter.get_output_data()
         if response is None:
             raise TimeoutError("No response from inverter")
@@ -304,6 +322,109 @@ async def collect_victron_device(name, device_config, slot):
         save_json(filepath, data)
 
 
+def get_first_goodwe_inverter(sems_data):
+    inverters = sems_data.get("inverter", [])
+    if isinstance(inverters, list) and inverters:
+        return inverters[0]
+    return {}
+
+
+def get_goodwe_reading(sems_data):
+    kpi = sems_data.get("kpi", {})
+    inverter = get_first_goodwe_inverter(sems_data)
+    inverter_data = inverter.get("d", {})
+    inverter_full = inverter.get("invert_full", {})
+
+    pac = first_number(
+        kpi.get("pac"),
+        inverter.get("pac"),
+        inverter_data.get("pac"),
+        inverter_full.get("pac"),
+    )
+    daily_kwh = first_number(
+        inverter.get("eday"),
+        inverter_data.get("eDay"),
+        inverter_full.get("eday"),
+        kpi.get("power"),
+    )
+    total_kwh = first_number(
+        inverter.get("etotal"),
+        inverter_data.get("eTotal"),
+        inverter_full.get("etotal"),
+        kpi.get("total_power"),
+    )
+    temperature = first_number(
+        inverter.get("tempperature"),
+        inverter_full.get("tempperature"),
+    )
+
+    return {
+        "pac": pac,
+        "daily_wh": daily_kwh * 1000 if daily_kwh is not None else None,
+        "total_kwh": total_kwh,
+        "temperature": temperature,
+        "status": inverter.get("status", sems_data.get("info", {}).get("status")),
+        "sems_time": sems_data.get("info", {}).get("time"),
+    }
+
+
+def collect_goodwe_sems_snapshot(device_config):
+    from pygoodwe import API
+
+    goodwe = API(
+        system_id=device_config["station_id"],
+        account=device_config["account"],
+        password=device_config["password"],
+    )
+    goodwe.getCurrentReadings()
+    return goodwe.data
+
+
+async def collect_goodwe_sems(name, device_config, slot):
+    filepath = get_filepath(name)
+    data = load_or_create_json(filepath)
+    data["intervals"][slot] = {
+        "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+    }
+
+    try:
+        sems_data = await asyncio.to_thread(collect_goodwe_sems_snapshot, device_config)
+        reading = get_goodwe_reading(sems_data)
+
+        if reading["pac"] is None and reading["daily_wh"] is None:
+            raise ValueError("No SEMS production values found")
+
+        daily_wh = round_value(reading["daily_wh"] or 0)
+        total_w = round_value(reading["pac"] or 0)
+
+        data["totals"] = {
+            "p1": daily_wh,
+            "p2": 0,
+        }
+        if reading["total_kwh"] is not None:
+            data["total_kwh"] = round_value(reading["total_kwh"])
+
+        interval = data["intervals"][slot]
+        interval.update(
+            {
+                "p1": total_w,
+                "p2": 0,
+                "total_w": total_w,
+            }
+        )
+        if reading["temperature"] is not None:
+            interval["temperature"] = round_value(reading["temperature"])
+        if reading["status"] is not None:
+            interval["status"] = reading["status"]
+        if reading["sems_time"]:
+            interval["sems_time"] = reading["sems_time"]
+
+    except Exception as exc:
+        mark_error(data["intervals"][slot], exc)
+
+    save_json(filepath, data)
+
+
 async def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     save_metadata()
@@ -316,6 +437,8 @@ async def main():
 
         if device_type == "apsystems":
             await collect_apsystems(name, device_config, slot)
+        elif device_type == "goodwe_sems":
+            await collect_goodwe_sems(name, device_config, slot)
         elif device_type == "victron":
             await collect_victron_device(name, device_config, slot)
         else:

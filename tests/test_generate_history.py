@@ -17,6 +17,7 @@ from generate_history import (  # noqa: E402
     build_history_entry,
     get_inverter_name,
     get_inverter_total_wh,
+    get_production_device_ids,
 )
 
 
@@ -121,11 +122,44 @@ class TestBuildHistoryEntry(unittest.TestCase):
             inverter_file = data_dir / "inv1-2026-05-03.json"
             inverter_file.write_text(json.dumps({"totals": {"p1": 1000, "p2": 500}}))
 
-            with patch("generate_history.DATA_DIR", data_dir):
+            with patch("generate_history.DATA_DIR", data_dir), patch(
+                "generate_history.METADATA_FILE", data_dir / "metadata.json"
+            ):
                 entry = build_history_entry("2026-05-03")
                 self.assertEqual(entry["date"], "2026-05-03")
                 self.assertEqual(entry["total_wh"], 1500.0)
                 self.assertEqual(entry["inverters"], {"inv1": 1500.0})
+
+    def test_filters_non_production_files_when_metadata_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            metadata_file = data_dir / "metadata.json"
+            metadata_file.write_text(json.dumps({
+                "devices": [
+                    {"id": "goodwe1", "type": "goodwe_sems", "label": "GoodWe"},
+                    {"id": "victron1", "type": "victron", "label": "Victron"},
+                ]
+            }))
+            (data_dir / "goodwe1-2026-05-03.json").write_text(
+                json.dumps({"totals": {"p1": 2300, "p2": 0}})
+            )
+            (data_dir / "victron1-fv-2026-05-03.json").write_text(
+                json.dumps({"intervals": {"1": {"value": 1000}}})
+            )
+
+            with patch("generate_history.DATA_DIR", data_dir), patch(
+                "generate_history.METADATA_FILE", metadata_file
+            ):
+                entry = build_history_entry("2026-05-03")
+                self.assertEqual(entry["total_wh"], 2300.0)
+                self.assertEqual(entry["inverters"], {"goodwe1": 2300.0})
+
+
+class TestGetProductionDeviceIds(unittest.TestCase):
+    def test_returns_none_without_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("generate_history.METADATA_FILE", Path(tmp) / "metadata.json"):
+                self.assertIsNone(get_production_device_ids())
 
 
 if __name__ == "__main__":

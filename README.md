@@ -1,6 +1,6 @@
 # sungraphs
 
-Monitor solar personal para microinversores **APSystems EZ1**. Colecta datos de producción cada 10 minutos, los almacena como JSON diarios y los visualiza en un dashboard web.
+Monitor solar personal para inversores **APSystems EZ1**, **GoodWe SEMS** y métricas **Victron**. Colecta datos cada 10 minutos, los almacena como JSON diarios y los visualiza en un dashboard web.
 
 ## Arquitectura
 
@@ -17,14 +17,14 @@ Monitor solar personal para microinversores **APSystems EZ1**. Colecta datos de 
                                  (static files)
 ```
 
-- **collect.py** — Consulta los inversores en la red local cada 10 min y guarda JSONs diarios por inversor.
+- **collect.py** — Consulta los inversores en la red local y SEMS Portal cada 10 min, y guarda JSONs diarios por dispositivo.
 - **generate_history.py** — Agrega los totales diarios en `data/history.json`.
 - **collect.sh / generate_history.sh** — Wrappers que ejecutan los scripts, hacen commit y push a Git.
 - **frontend/** — App React (Vite + TypeScript) que consume los JSONs como estáticos.
 
 ## Requisitos
 
-- Python 3 + `apsystems-ez1` (ver `requirements.txt`)
+- Python 3 + dependencias de `requirements.txt`
 - Node.js 20+ (para desarrollar el frontend)
 
 ## Uso
@@ -45,9 +45,22 @@ cd frontend && npm run build
 
 ## Configuración
 
-`config.toml` — lista de dispositivos con sus direcciones IP en la LAN y, para
-dispositivos Victron, las muestras MQTT que se quieren guardar. Cada muestra
-genera un JSON diario con el nombre `<dispositivo>-<muestra>-YYYY-MM-DD.json`.
+`config.toml` — lista de dispositivos. Los APSystems y Victron usan direcciones
+IP en la LAN; GoodWe SEMS usa credenciales de portal y `station_id`. Cada
+muestra Victron genera un JSON diario con el nombre
+`<dispositivo>-<muestra>-YYYY-MM-DD.json`.
+
+Ejemplo GoodWe SEMS:
+
+```toml
+[[devices]]
+id = "goodwe1"
+type = "goodwe_sems"
+label = "GoodWe DNS-5000"
+account = "usuario@example.com"
+password = "..."
+station_id = "..."
+```
 
 Ejemplo de muestra Victron:
 
