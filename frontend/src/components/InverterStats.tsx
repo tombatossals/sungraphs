@@ -51,7 +51,7 @@ export default function InverterStats({ entry, dailyData, metadata }: Props) {
 
   return (
     <div className="flex flex-col gap-y-3">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {inverterIds.map((id, index) => {
           const meta = INVERTER_META[id] ?? {
             label: id,
