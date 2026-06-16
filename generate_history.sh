@@ -10,6 +10,7 @@ DATE_ARG="${1:-today}"
 DATE_STR=$(date -d "$DATE_ARG" "+%Y-%m-%d")
 
 "$BASE_DIR/.venv/bin/python" generate_history.py "$DATE_STR"
+"$BASE_DIR/.venv/bin/python" generate_daily_data.py "$DATE_STR"
 
 git add -A
 if [ -n "$(git status --porcelain)" ]; then

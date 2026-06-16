@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useReducer, useRef } from "react";
-import type { DailyData, HistoryEntry, SolarMetadata } from "./types";
+import type { DailyBundle, DailyData, HistoryEntry, SolarMetadata } from "./types";
 
 const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
@@ -15,6 +15,10 @@ const VICTRON_IDS = [
 
 function getDailyDataUrl(id: string, date: string) {
   return `${DAILY_DATA_BASE_URL}/${id}-${date}.json`;
+}
+
+function getDailyBundleUrl(date: string) {
+  return `${DAILY_DATA_BASE_URL}/daily-${date}.json`;
 }
 
 function getDailyIds(metadata: SolarMetadata | null) {
@@ -159,20 +163,35 @@ export function useSolarData() {
     const controller = new AbortController();
     dispatch({ type: "fetch" });
 
-    const allIds = getDailyIds(metadata);
+    async function fetchLegacyDailyFiles() {
+      const allIds = getDailyIds(metadata);
+      const results = await Promise.all(
+        allIds.map(async (id) => {
+          const r = await fetch(getDailyDataUrl(id, date), { signal: controller.signal });
+          if (!r.ok) {
+            return { id, data: null };
+          }
+          return { id, data: (await r.json()) as DailyData };
+        })
+      );
 
-    Promise.all(
-      allIds.map(async (id) => {
-        const r = await fetch(getDailyDataUrl(id, date), { signal: controller.signal });
-        if (!r.ok) {
-          return { id, data: null };
-        }
-        return { id, data: (await r.json()) as DailyData };
-      })
-    )
-      .then(results => {
-        const record: Record<string, DailyData> = {};
-        results.forEach(({ id, data }) => { if (data) record[id] = data; });
+      const record: Record<string, DailyData> = {};
+      results.forEach(({ id, data }) => { if (data) record[id] = data; });
+      return record;
+    }
+
+    async function fetchDailyData() {
+      const bundleResponse = await fetch(getDailyBundleUrl(date), { signal: controller.signal });
+      if (bundleResponse.ok) {
+        const bundle = (await bundleResponse.json()) as DailyBundle;
+        return bundle.devices ?? {};
+      }
+
+      return fetchLegacyDailyFiles();
+    }
+
+    fetchDailyData()
+      .then(record => {
         if (Object.keys(record).length === 0) {
           throw new Error(`No se pudieron cargar los datos para ${date}.`);
         }

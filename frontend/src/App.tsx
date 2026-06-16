@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import ProductionHeatmap from "./components/ProductionHeatmap";
 import InverterStats from "./components/InverterStats";
 import VictronStats from "./components/VictronStats";
+import EnergyFlowChart from "./components/EnergyFlowChart";
 import { useSolarData } from "./useSolarData";
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
         {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-")) && (
           <VictronStats dailyData={dailyData} metadata={metadata} />
         )}
+        <EnergyFlowChart dailyData={dailyData} metadata={metadata} />
       </div>
     </>
   );

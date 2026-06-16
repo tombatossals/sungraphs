@@ -8,6 +8,7 @@ cd "$BASE_DIR"
 
 "$BASE_DIR/.venv/bin/python" collect.py
 "$BASE_DIR/.venv/bin/python" generate_history.py "$(date '+%Y-%m-%d')"
+"$BASE_DIR/.venv/bin/python" generate_daily_data.py "$(date '+%Y-%m-%d')"
 
 git add -A
 git commit -q -m "data: collect $(date '+%Y-%m-%d %H:%M')"

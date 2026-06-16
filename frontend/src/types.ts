@@ -13,6 +13,13 @@ export interface DailyData {
   intervals: Record<string, Interval>;
 }
 
+export interface DailyBundle {
+  date: string;
+  generated_at?: string;
+  metadata?: SolarMetadata;
+  devices: Record<string, DailyData>;
+}
+
 export interface HistoryEntry {
   date: string;
   total_wh: number;
