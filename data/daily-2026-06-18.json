@@ -1,6 +1,6 @@
 {
   "date": "2026-06-18",
-  "generated_at": "2026-06-17T22:01:00.412791+00:00",
+  "generated_at": "2026-06-17T22:10:18.815841+00:00",
   "metadata": {
     "devices": [
       {
@@ -69,7 +69,7 @@
     "goodwe1": {
       "date": "18/06/2026",
       "totals": {
-        "p1": 28000.0,
+        "p1": 0,
         "p2": 0
       },
       "intervals": {
@@ -81,6 +81,15 @@
           "temperature": 0.0,
           "status": -1,
           "sems_time": "06/18/2026 00:00:05"
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0,
+          "temperature": 0.0,
+          "status": -1,
+          "sems_time": "06/18/2026 00:10:03"
         }
       },
       "total_kwh": 37810.9
@@ -92,6 +101,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 22
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 13
         }
       }
     },
@@ -102,6 +115,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 691.6
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 658.7
         }
       }
     },
@@ -112,6 +129,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 691.6
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 658.7
         }
       }
     },
@@ -122,6 +143,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 1.6
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 1.7
         }
       }
     },
@@ -132,6 +157,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 706
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 681
         }
       }
     },
@@ -141,6 +170,10 @@
       "intervals": {
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
+          "value": 49.73
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
           "value": 49.73
         }
       }
@@ -152,6 +185,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": -14.2
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": -13.7
         }
       }
     },
@@ -162,6 +199,10 @@
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
           "value": 80.0
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "value": 79.0
         }
       }
     },
@@ -171,6 +212,12 @@
       "intervals": {
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
@@ -186,6 +233,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
         }
       }
     },
@@ -195,6 +248,12 @@
       "intervals": {
         "1781733600": {
           "iso_time": "2026-06-18T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        },
+        "1781734200": {
+          "iso_time": "2026-06-18T00:10:00",
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
