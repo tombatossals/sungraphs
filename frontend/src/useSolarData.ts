@@ -7,6 +7,7 @@ const PRODUCTION_DEVICE_TYPES = new Set(["apsystems", "goodwe_sems"]);
 const FALLBACK_INVERTER_IDS = ["goodwe1", "apsystems1", "apsystems2", "apsystems3"];
 const VICTRON_IDS = [
   "victron1-bateria",
+  "victron1-bateria-soc",
   "victron1-cargas-criticas",
   "victron1-consumo",
   "victron1-fv",

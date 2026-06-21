@@ -304,7 +304,7 @@ export default function EnergyFlowChart({ dailyData, metadata }: Props) {
       <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-soft)" }}>
         Vista global
       </h2>
-      <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3">
         <ChartBlock
           dailyData={dailyData}
           metrics={productionMetrics}
