@@ -120,7 +120,8 @@ function buildWeeks(data: HistoryEntry[]): HeatmapWeek[] {
   const today = new Date();
   const yearStart = new Date(firstDate.getFullYear(), 0, 1);
   const startDate = startOfWeek(yearStart);
-  const endDate = endOfWeek(today);
+  const yearEnd = new Date(today.getFullYear(), 11, 31);
+  const endDate = endOfWeek(addDays(yearEnd, 14));
   const maxWh = Math.max(...sortedData.map(entry => entry.total_wh), 0);
   const weeks: HeatmapWeek[] = [];
   let cursor = new Date(startDate);
