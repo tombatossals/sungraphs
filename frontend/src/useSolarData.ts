@@ -3,38 +3,9 @@ import type { DailyBundle, DailyData, HistoryEntry, SolarMetadata } from "./type
 
 const DAILY_DATA_BASE_URL = "/data";
 const REFETCH_INTERVAL = 5 * 60 * 1000;
-const PRODUCTION_DEVICE_TYPES = new Set(["apsystems", "goodwe_sems"]);
-const FALLBACK_INVERTER_IDS = ["goodwe1", "apsystems1", "apsystems2", "apsystems3"];
-const VICTRON_IDS = [
-  "victron1-bateria",
-  "victron1-bateria-soc",
-  "victron1-bateria-temperatura",
-  "victron1-cargas-criticas",
-  "victron1-consumo",
-  "victron1-fv",
-  "victron1-red",
-];
-
-function getDailyDataUrl(id: string, date: string) {
-  return `${DAILY_DATA_BASE_URL}/${id}-${date}.json`;
-}
 
 function getDailyBundleUrl(date: string) {
   return `${DAILY_DATA_BASE_URL}/daily-${date}.json`;
-}
-
-function getDailyIds(metadata: SolarMetadata | null) {
-  if (!metadata) return [...FALLBACK_INVERTER_IDS, ...VICTRON_IDS];
-
-  const ids = metadata.devices.flatMap(device => {
-    if (PRODUCTION_DEVICE_TYPES.has(device.type)) return [device.id];
-    if (device.type === "victron") {
-      return device.samples?.map(sample => `${device.id}-${sample.id}`) ?? [];
-    }
-    return [];
-  });
-
-  return ids.length > 0 ? ids : [...FALLBACK_INVERTER_IDS, ...VICTRON_IDS];
 }
 
 interface DailyState {
@@ -165,31 +136,15 @@ export function useSolarData() {
     const controller = new AbortController();
     dispatch({ type: "fetch" });
 
-    async function fetchLegacyDailyFiles() {
-      const allIds = getDailyIds(metadata);
-      const results = await Promise.all(
-        allIds.map(async (id) => {
-          const r = await fetch(getDailyDataUrl(id, date), { signal: controller.signal });
-          if (!r.ok) {
-            return { id, data: null };
-          }
-          return { id, data: (await r.json()) as DailyData };
-        })
-      );
-
-      const record: Record<string, DailyData> = {};
-      results.forEach(({ id, data }) => { if (data) record[id] = data; });
-      return record;
-    }
-
     async function fetchDailyData() {
       const bundleResponse = await fetch(getDailyBundleUrl(date), { signal: controller.signal });
-      if (bundleResponse.ok) {
-        const bundle = (await bundleResponse.json()) as DailyBundle;
-        return bundle.devices ?? {};
+      if (!bundleResponse.ok) {
+        throw new Error(`No se pudo cargar el resumen diario para ${date}.`);
       }
 
-      return fetchLegacyDailyFiles();
+      const bundle = (await bundleResponse.json()) as DailyBundle;
+      if (bundle.metadata) setMetadata(bundle.metadata);
+      return bundle.devices ?? {};
     }
 
     fetchDailyData()
@@ -206,7 +161,7 @@ export function useSolarData() {
       });
 
     return () => controller.abort();
-  }, [date, metadata]);
+  }, [date]);
 
   const selectedHistoryEntry = history.find(e => e.date === date) ?? null;
   const averageWh = history.length > 0
