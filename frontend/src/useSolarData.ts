@@ -8,6 +8,7 @@ const FALLBACK_INVERTER_IDS = ["goodwe1", "apsystems1", "apsystems2", "apsystems
 const VICTRON_IDS = [
   "victron1-bateria",
   "victron1-bateria-soc",
+  "victron1-bateria-temperatura",
   "victron1-cargas-criticas",
   "victron1-consumo",
   "victron1-fv",

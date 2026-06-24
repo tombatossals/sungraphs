@@ -52,6 +52,14 @@ DEFAULT_VICTRON_SAMPLES = [
         "topics": ["battery/512/Soc"],
         "digits": 1,
     },
+    {
+        "id": "bateria-temperatura",
+        "topics": [
+            "system/0/Dc/Battery/Temperature",
+            "battery/512/Dc/0/Temperature",
+        ],
+        "digits": 1,
+    },
 ]
 
 

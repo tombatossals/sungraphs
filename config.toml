@@ -66,6 +66,15 @@ label = "SOC batería"
 topic = "battery/512/Soc"
 digits = 1
 
+[[devices.samples]]
+id = "bateria-temperatura"
+label = "Temperatura batería"
+topics = [
+  "system/0/Dc/Battery/Temperature",
+  "battery/512/Dc/0/Temperature",
+]
+digits = 1
+
 [[devices]]
 id = "apsystems1"
 type = "apsystems"

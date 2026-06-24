@@ -74,6 +74,10 @@ topics = [
 digits = 1
 ```
 
+Las muestras Victron pueden indicar `topic` o una lista `topics`; en ese caso
+se usa el primer valor MQTT disponible y se guarda como
+`<dispositivo>-<muestra>-YYYY-MM-DD.json`.
+
 ## Licencia
 
 Uso personal.

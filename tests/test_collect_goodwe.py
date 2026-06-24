@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from collect import get_goodwe_reading, split_goodwe_daily_wh  # noqa: E402
+from collect import get_goodwe_reading, get_victron_sample_value, split_goodwe_daily_wh  # noqa: E402
 
 
 class TestGetGoodweReading(unittest.TestCase):
@@ -70,6 +70,21 @@ class TestGetGoodweReading(unittest.TestCase):
         self.assertEqual(reading["daily_wh"], 1250.0)
         self.assertIsNone(reading["mppt1_w"])
         self.assertIsNone(reading["mppt2_w"])
+
+
+class TestGetVictronSampleValue(unittest.TestCase):
+    def test_uses_first_available_topic(self):
+        sample = {
+            "id": "bateria-temperatura",
+            "topics": [
+                "system/0/Dc/Battery/Temperature",
+                "battery/512/Dc/0/Temperature",
+            ],
+            "digits": 1,
+        }
+        values = {"N/portal/battery/512/Dc/0/Temperature": 27.26}
+
+        self.assertEqual(get_victron_sample_value(values, "portal", sample), 27.3)
 
 
 if __name__ == "__main__":
