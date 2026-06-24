@@ -25,9 +25,10 @@ interface Props {
   data: DailyData;
   color: string;
   getValue?: (interval: Interval) => number | null;
+  label?: string;
 }
 
-export default function InverterDailyChart({ data, color, getValue }: Props) {
+export default function InverterDailyChart({ data, color, getValue, label = "Potencia" }: Props) {
   const intervals = Object.values(data.intervals).filter(interval => {
     if (getValue) {
       const v = getValue(interval);
@@ -87,7 +88,7 @@ export default function InverterDailyChart({ data, color, getValue }: Props) {
     labels,
     datasets: [
       {
-        label: "Potencia",
+        label,
         data: values,
         borderColor: color,
         backgroundColor: `${color}33`,

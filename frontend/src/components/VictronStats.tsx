@@ -13,6 +13,7 @@ const VICTRON_META: Record<string, { label: string; color: string }> = {
   "victron1-red": { label: "Red Eléctrica", color: "#e74c3c" },
   "victron1-bateria": { label: "Batería", color: "#8e44ad" },
   "victron1-bateria-soc": { label: "SOC Batería", color: "#2ecc71" },
+  "victron1-bateria-temperatura": { label: "Temperatura batería", color: "#16a085" },
 };
 
 const VICTRON_SUMMARY_META: Record<string, { label: string; color: string }> = {
@@ -21,6 +22,7 @@ const VICTRON_SUMMARY_META: Record<string, { label: string; color: string }> = {
   "victron1-red": { label: "Iberdrola", color: "#e74c3c" },
   "victron1-bateria": { label: "Batería", color: "#8e44ad" },
   "victron1-bateria-soc": { label: "SOC Batería", color: "#2ecc71" },
+  "victron1-bateria-temperatura": { label: "Temperatura batería", color: "#16a085" },
 };
 
 const VICTRON_SUMMARY_ORDER = [
@@ -29,6 +31,7 @@ const VICTRON_SUMMARY_ORDER = [
   "victron1-red",
   "victron1-bateria",
   "victron1-bateria-soc",
+  "victron1-bateria-temperatura",
 ];
 
 const VICTRON_ORDER = [
@@ -37,6 +40,7 @@ const VICTRON_ORDER = [
   "victron1-red",
   "victron1-bateria",
   "victron1-bateria-soc",
+  "victron1-bateria-temperatura",
 ];
 
 function getValue(interval: Interval): number | null {
@@ -53,6 +57,16 @@ function formatW(value: number): string {
 
 function formatPercent(value: number): string {
   return `${Math.round(value)} %`;
+}
+
+function formatTemperature(value: number): string {
+  return `${value.toFixed(1)} °C`;
+}
+
+function formatLatestValue(id: string, value: number): string {
+  if (id === "victron1-bateria-soc") return formatPercent(value);
+  if (id === "victron1-bateria-temperatura") return formatTemperature(value);
+  return formatW(value);
 }
 
 function getLatestValue(data: DailyData | undefined): number | null {
@@ -78,7 +92,7 @@ export default function VictronStats({ dailyData, metadata }: Props) {
       <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-soft)" }}>
         Consumos
       </h2>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
         {VICTRON_SUMMARY_ORDER.map(id => {
           const meta = VICTRON_SUMMARY_META[id];
           const value = getLatestValue(dailyData[id]);
@@ -92,7 +106,7 @@ export default function VictronStats({ dailyData, metadata }: Props) {
                 {meta.label}
               </span>
               <span className="mt-1 text-lg font-semibold tracking-tight" style={{ color: "var(--text-h)" }}>
-                {value === null ? "Sin datos" : id === "victron1-bateria-soc" ? formatPercent(value) : formatW(value)}
+                {value === null ? "Sin datos" : formatLatestValue(id, value)}
               </span>
               <span className="mt-0.5 text-[0.6rem] font-medium" style={{ color: "var(--text-soft)" }}>
                 Última lectura
@@ -110,13 +124,13 @@ export default function VictronStats({ dailyData, metadata }: Props) {
           return (
             <div
               key={`victron-${id}`}
-              className={`rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col${id === "victron1-bateria-soc" ? " md:col-span-2" : ""}`}
+              className="rounded-xl border border-[color:var(--border)] bg-[color:var(--panel)] p-3 flex flex-col"
             >
               <span className="text-[0.6rem] font-semibold uppercase tracking-wider mb-1" style={{ color: meta.color }}>
                 {label}
               </span>
               {daily ? (
-                <InverterDailyChart data={daily} color={meta.color} getValue={getValue} />
+                <InverterDailyChart data={daily} color={meta.color} getValue={getValue} label={label} />
               ) : (
                 <div className="h-32 flex items-center justify-center">
                   <span className="text-xs" style={{ color: "var(--text-soft)" }}>Sin datos</span>
