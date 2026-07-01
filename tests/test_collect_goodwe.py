@@ -7,7 +7,12 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from collect import get_goodwe_reading, get_victron_sample_value, split_goodwe_daily_wh  # noqa: E402
+from collect import (  # noqa: E402
+    build_victron_latest_device,
+    get_goodwe_reading,
+    get_victron_sample_value,
+    split_goodwe_daily_wh,
+)
 
 
 class TestGetGoodweReading(unittest.TestCase):
@@ -85,6 +90,49 @@ class TestGetVictronSampleValue(unittest.TestCase):
         values = {"N/portal/battery/512/Dc/0/Temperature": 27.26}
 
         self.assertEqual(get_victron_sample_value(values, "portal", sample), 27.3)
+
+
+class TestBuildVictronLatestDevice(unittest.TestCase):
+    def test_builds_latest_snapshot_with_values_and_labels(self):
+        device = {"label": "Victron"}
+        samples = [
+            {"id": "bateria-corriente", "label": "Corriente batería"},
+            {"id": "bateria-temperatura", "label": "Temperatura batería"},
+        ]
+        latest = build_victron_latest_device(
+            "victron1",
+            device,
+            samples,
+            {"bateria-corriente": -12.34, "bateria-temperatura": 27.3},
+            "1782902400",
+        )
+
+        self.assertEqual(latest["id"], "victron1")
+        self.assertEqual(latest["label"], "Victron")
+        self.assertEqual(latest["slot"], "1782902400")
+        self.assertEqual(
+            latest["readings"]["bateria-corriente"],
+            {
+                "id": "bateria-corriente",
+                "label": "Corriente batería",
+                "value": -12.34,
+            },
+        )
+
+    def test_marks_missing_sample_as_error(self):
+        samples = [{"id": "bateria-temperatura"}]
+        latest = build_victron_latest_device(
+            "victron1",
+            {},
+            samples,
+            {"bateria-temperatura": None},
+            "1782902400",
+        )
+
+        reading = latest["readings"]["bateria-temperatura"]
+        self.assertTrue(reading["error"])
+        self.assertEqual(reading["error_type"], "KeyError")
+        self.assertIn("Missing Victron sample bateria-temperatura", reading["error_message"])
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 import tomllib
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 import time
 
@@ -11,6 +11,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 CONFIG_TOML = os.path.join(BASE_DIR, "config.toml")
 CONFIG_JSON = os.path.join(BASE_DIR, "config.json")
 METADATA_FILE = os.path.join(DATA_DIR, "metadata.json")
+VICTRON_FILE = os.path.join(DATA_DIR, "victron.json")
 
 DEFAULT_VICTRON_SAMPLES = [
     {
@@ -215,6 +216,17 @@ def mark_error(interval, exc):
         interval["error_message"] = message
 
 
+def get_error_payload(exc):
+    payload = {
+        "error": True,
+        "error_type": type(exc).__name__,
+    }
+    message = str(exc)
+    if message:
+        payload["error_message"] = message
+    return payload
+
+
 def get_sample_topics(sample):
     if "topics" in sample:
         return sample["topics"]
@@ -278,6 +290,69 @@ def collect_victron(broker_ip, samples, listen_seconds=5):
         sample["id"]: get_victron_sample_value(values, portal_id, sample)
         for sample in samples
     }
+
+
+def build_victron_latest_device(
+    name,
+    device_config,
+    samples,
+    snapshot,
+    slot,
+    victron_error=None,
+):
+    readings = {}
+    for sample in samples:
+        sample_id = sample["id"]
+        reading = {
+            "id": sample_id,
+            "label": sample.get("label", sample_id),
+        }
+
+        value = snapshot.get(sample_id) if snapshot else None
+        if value is None:
+            reading.update(
+                get_error_payload(
+                    victron_error or KeyError(f"Missing Victron sample {sample_id}")
+                )
+            )
+        else:
+            reading["value"] = value
+
+        readings[sample_id] = reading
+
+    return {
+        "id": name,
+        "label": device_config.get("label", name),
+        "slot": slot,
+        "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+        "readings": readings,
+    }
+
+
+def load_victron_latest():
+    if not os.path.exists(VICTRON_FILE):
+        return {"devices": {}}
+
+    try:
+        with open(VICTRON_FILE, "r") as f:
+            data = json.load(f)
+    except json.JSONDecodeError:
+        return {"devices": {}}
+
+    if not isinstance(data, dict):
+        return {"devices": {}}
+
+    data.setdefault("devices", {})
+    if not isinstance(data["devices"], dict):
+        data["devices"] = {}
+    return data
+
+
+def save_victron_latest(name, device_latest):
+    latest = load_victron_latest()
+    latest["generated_at"] = datetime.now(timezone.utc).isoformat()
+    latest["devices"][name] = device_latest
+    save_json(VICTRON_FILE, latest)
 
 
 async def collect_apsystems(name, device_config, slot):
@@ -348,6 +423,18 @@ async def collect_victron_device(name, device_config, slot):
             data["intervals"][slot]["value"] = snapshot[sample_id]
 
         save_json(filepath, data)
+
+    save_victron_latest(
+        name,
+        build_victron_latest_device(
+            name,
+            device_config,
+            samples,
+            snapshot,
+            slot,
+            victron_error,
+        ),
+    )
 
 
 def get_first_goodwe_inverter(sems_data):

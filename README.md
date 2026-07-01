@@ -17,7 +17,7 @@ Monitor solar personal para inversores **APSystems EZ1**, **GoodWe SEMS** y mét
                                  (static files)
 ```
 
-- **collect.py** — Consulta los inversores en la red local y SEMS Portal cada 10 min, y guarda JSONs diarios por dispositivo.
+- **collect.py** — Consulta los inversores en la red local y SEMS Portal cada 10 min, guarda JSONs diarios por dispositivo y actualiza `data/victron.json` con las últimas lecturas Victron.
 - **generate_history.py** — Agrega los totales diarios en `data/history.json`.
 - **collect.sh / generate_history.sh** — Wrappers que ejecutan los scripts, hacen commit y push a Git.
 - **frontend/** — App React (Vite + TypeScript) que consume los JSONs como estáticos.
@@ -77,6 +77,11 @@ digits = 1
 Las muestras Victron pueden indicar `topic` o una lista `topics`; en ese caso
 se usa el primer valor MQTT disponible y se guarda como
 `<dispositivo>-<muestra>-YYYY-MM-DD.json`.
+
+Además, cada recogida Victron actualiza `data/victron.json` con el último
+snapshot de todas sus muestras configuradas. El archivo contiene los equipos
+Victron por id, su `slot`, `iso_time` y un mapa `readings` con valores como
+temperatura, corriente, tensión o SOC.
 
 ## Licencia
 
