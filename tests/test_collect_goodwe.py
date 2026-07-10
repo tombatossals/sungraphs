@@ -9,7 +9,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from collect import (  # noqa: E402
     build_victron_latest_device,
+    get_nearest_vrm_point,
+    get_recoverable_vrm_points,
     get_goodwe_reading,
+    interval_needs_recovery,
+    normalize_vrm_timestamp,
     get_victron_sample_value,
     split_goodwe_daily_wh,
 )
@@ -90,6 +94,41 @@ class TestGetVictronSampleValue(unittest.TestCase):
         values = {"N/portal/battery/512/Dc/0/Temperature": 27.26}
 
         self.assertEqual(get_victron_sample_value(values, "portal", sample), 27.3)
+
+
+class TestVictronVrmRecovery(unittest.TestCase):
+    def test_normalizes_vrm_millisecond_timestamps(self):
+        self.assertEqual(normalize_vrm_timestamp(1783634400000), 1783634400)
+
+    def test_builds_points_with_multiplier_and_source_time(self):
+        sample = {
+            "id": "bateria",
+            "vrm_attribute": "Pb",
+            "multiplier": -1,
+            "digits": 1,
+        }
+        records = {"Pb": [[1783634400000, -123.44]]}
+
+        points = get_recoverable_vrm_points(records, sample)
+
+        self.assertEqual(points["1783634400"]["timestamp"], 1783634400)
+        self.assertEqual(points["1783634400"]["value"], 123.4)
+        self.assertIn("T", points["1783634400"]["source_time"])
+
+    def test_finds_nearest_vrm_point_for_ten_minute_slot(self):
+        points = {
+            "1783634400": {"timestamp": 1783634400, "value": 10},
+            "1783635300": {"timestamp": 1783635300, "value": 20},
+        }
+
+        self.assertEqual(get_nearest_vrm_point(points, "1783635000")["value"], 20)
+        self.assertIsNone(get_nearest_vrm_point(points, "1783636200", max_distance=60))
+
+    def test_only_recovers_missing_error_or_empty_values(self):
+        self.assertTrue(interval_needs_recovery(None))
+        self.assertTrue(interval_needs_recovery({"error": True}))
+        self.assertTrue(interval_needs_recovery({"iso_time": "2026-07-10T00:00:00"}))
+        self.assertFalse(interval_needs_recovery({"value": 0}))
 
 
 class TestBuildVictronLatestDevice(unittest.TestCase):

@@ -1,10 +1,13 @@
 import asyncio
+import argparse
 import json
 import os
 import tomllib
-from datetime import datetime, timezone
+from datetime import datetime, time as datetime_time, timezone
 from collections import defaultdict
 import time
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -110,13 +113,36 @@ def load_config():
 config = load_config()
 
 
-def get_time_slot():
-    now = datetime.now().timestamp()
+def get_time_slot(timestamp=None):
+    now = datetime.now().timestamp() if timestamp is None else timestamp
     slot = int(now // 600) * 600
     return str(slot)
 
 
-def load_or_create_json(filename):
+def get_local_date(target_date=None):
+    if target_date is not None:
+        return target_date
+    return datetime.now().date()
+
+
+def get_day_start_slot(target_date=None):
+    day = get_local_date(target_date)
+    start = datetime.combine(day, datetime_time.min).timestamp()
+    return int(start // 600) * 600
+
+
+def get_day_slots(current_slot, target_date=None):
+    start_slot = get_day_start_slot(target_date)
+    end_slot = int(current_slot)
+    return [str(slot) for slot in range(start_slot, end_slot + 1, 600)]
+
+
+def get_json_date(target_date=None):
+    day = get_local_date(target_date)
+    return day.strftime("%d/%m/%Y")
+
+
+def load_or_create_json(filename, target_date=None):
     if os.path.exists(filename):
         with open(filename, "r") as f:
             data = json.load(f)
@@ -124,7 +150,7 @@ def load_or_create_json(filename):
             return data
     else:
         return {
-            "date": datetime.now().strftime("%d/%m/%Y"),
+            "date": get_json_date(target_date),
             "totals": {},
             "intervals": {},
         }
@@ -156,8 +182,9 @@ def save_metadata():
     save_json(METADATA_FILE, metadata)
 
 
-def get_filepath(name):
-    filename = f"{name}-{datetime.now().strftime('%Y-%m-%d')}.json"
+def get_filepath(name, target_date=None):
+    day = get_local_date(target_date)
+    filename = f"{name}-{day.strftime('%Y-%m-%d')}.json"
     return os.path.join(DATA_DIR, filename)
 
 
@@ -290,6 +317,196 @@ def collect_victron(broker_ip, samples, listen_seconds=5):
         sample["id"]: get_victron_sample_value(values, portal_id, sample)
         for sample in samples
     }
+
+
+def get_vrm_token(device_config):
+    token = device_config.get("vrm_token")
+    if token:
+        return token
+
+    token_env = device_config.get("vrm_token_env", "VICTRON_VRM_TOKEN")
+    return os.environ.get(token_env) or os.environ.get("VRM_TOKEN")
+
+
+def get_vrm_sample_attributes(sample):
+    if "vrm_attributes" in sample:
+        return sample["vrm_attributes"]
+    if "vrm_attribute" in sample:
+        return [sample["vrm_attribute"]]
+    return []
+
+
+def get_vrm_recovery_config(device_config):
+    site_id = device_config.get("vrm_site_id") or device_config.get("site_id")
+    token = get_vrm_token(device_config)
+    if not site_id or not token:
+        return None
+
+    samples = device_config.get("samples", DEFAULT_VICTRON_SAMPLES)
+    attributes = []
+    for sample in samples:
+        for attribute in get_vrm_sample_attributes(sample):
+            if attribute not in attributes:
+                attributes.append(attribute)
+
+    if not attributes:
+        return None
+
+    return {"site_id": str(site_id), "token": token, "attributes": attributes}
+
+
+def fetch_vrm_stats(site_id, token, attributes, start, end, timeout=20):
+    query = [
+        ("type", "custom"),
+        ("interval", "15mins"),
+        ("start", str(start)),
+        ("end", str(end)),
+    ]
+    for attribute in attributes:
+        query.append(("attributeCodes[]", attribute))
+
+    url = (
+        f"https://vrmapi.victronenergy.com/v2/installations/{site_id}/stats?"
+        + urlencode(query)
+    )
+    request = Request(url, headers={"x-authorization": f"Token {token}"})
+    with urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def get_vrm_records(stats_response):
+    records = stats_response.get("records", {})
+    if isinstance(records, dict):
+        return records
+    return {}
+
+
+def get_vrm_series(records, attribute):
+    series = records.get(attribute)
+    if isinstance(series, list):
+        return series
+    return []
+
+
+def normalize_vrm_timestamp(timestamp):
+    value = float(timestamp)
+    if value > 10_000_000_000:
+        value = value / 1000
+    return int(value)
+
+
+def get_recoverable_vrm_points(records, sample):
+    points = {}
+    for attribute in get_vrm_sample_attributes(sample):
+        for point in get_vrm_series(records, attribute):
+            if not isinstance(point, list) or len(point) < 2:
+                continue
+            timestamp = normalize_vrm_timestamp(point[0])
+            value = to_float(point[1])
+            if value is None:
+                continue
+
+            slot = get_time_slot(timestamp)
+            multiplier = sample.get("multiplier", 1)
+            digits = sample.get("digits", 1)
+            points[slot] = {
+                "timestamp": timestamp,
+                "value": round_optional(value * multiplier, digits),
+                "source_time": datetime.fromtimestamp(timestamp).isoformat(),
+            }
+        if points:
+            break
+    return points
+
+
+def interval_needs_recovery(interval):
+    if not interval:
+        return True
+    return interval.get("error") or interval.get("value") is None
+
+
+def get_nearest_vrm_point(points, slot, max_distance=600):
+    if slot in points:
+        return points[slot]
+
+    target = int(slot)
+    nearest = None
+    nearest_distance = None
+    for point in points.values():
+        distance = abs(int(point["timestamp"]) - target)
+        if distance <= max_distance and (
+            nearest_distance is None or distance < nearest_distance
+        ):
+            nearest = point
+            nearest_distance = distance
+    return nearest
+
+
+def has_victron_day_gaps(name, samples, current_slot, target_date=None):
+    slots = get_day_slots(current_slot, target_date)
+    for sample in samples:
+        filepath = get_filepath(f"{name}-{sample['id']}", target_date)
+        if not os.path.exists(filepath):
+            return True
+        data = load_or_create_json(filepath, target_date)
+        intervals = data.get("intervals", {})
+        if any(interval_needs_recovery(intervals.get(slot)) for slot in slots):
+            return True
+    return False
+
+
+def recover_victron_day_from_vrm(name, device_config, current_slot, target_date=None):
+    recovery_config = get_vrm_recovery_config(device_config)
+    if not recovery_config:
+        return 0
+
+    samples = device_config.get("samples", DEFAULT_VICTRON_SAMPLES)
+    if not has_victron_day_gaps(name, samples, current_slot, target_date):
+        return 0
+
+    start = get_day_start_slot(target_date)
+    end = int(current_slot) + 600
+    stats_response = fetch_vrm_stats(
+        recovery_config["site_id"],
+        recovery_config["token"],
+        recovery_config["attributes"],
+        start,
+        end,
+        device_config.get("vrm_timeout", 20),
+    )
+    records = get_vrm_records(stats_response)
+    recovered = 0
+
+    for sample in samples:
+        sample_id = sample["id"]
+        points = get_recoverable_vrm_points(records, sample)
+        if not points:
+            continue
+
+        filepath = get_filepath(f"{name}-{sample_id}", target_date)
+        data = load_or_create_json(filepath, target_date)
+        intervals = data.setdefault("intervals", {})
+
+        for slot in get_day_slots(current_slot, target_date):
+            if int(slot) < start or int(slot) > int(current_slot):
+                continue
+            if not interval_needs_recovery(intervals.get(slot)):
+                continue
+            point = get_nearest_vrm_point(points, slot)
+            if not point:
+                continue
+
+            intervals[slot] = {
+                "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+                "value": point["value"],
+                "source": "vrm_recovery",
+                "source_time": point["source_time"],
+            }
+            recovered += 1
+
+        save_json(filepath, data)
+
+    return recovered
 
 
 def build_victron_latest_device(
@@ -436,6 +653,18 @@ async def collect_victron_device(name, device_config, slot):
         ),
     )
 
+    try:
+        recovered = await asyncio.to_thread(
+            recover_victron_day_from_vrm,
+            name,
+            device_config,
+            slot,
+        )
+        if recovered:
+            print(f"Recovered {recovered} Victron intervals from VRM for {name}")
+    except Exception as exc:
+        print(f"Error recovering Victron intervals from VRM for {name}: {exc}")
+
 
 def get_first_goodwe_inverter(sems_data):
     inverters = sems_data.get("inverter", [])
@@ -553,7 +782,50 @@ async def collect_goodwe_sems(name, device_config, slot):
     save_json(filepath, data)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Colecta datos solares diarios.")
+    parser.add_argument(
+        "--recover-victron-day",
+        nargs="?",
+        const=datetime.now().strftime("%Y-%m-%d"),
+        help="Recupera huecos Victron de una fecha YYYY-MM-DD usando VRM y sale.",
+    )
+    return parser.parse_args()
+
+
+def parse_target_date(value):
+    return datetime.strptime(value, "%Y-%m-%d").date()
+
+
+async def recover_victron_devices_for_day(target_date):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    save_metadata()
+
+    if target_date == datetime.now().date():
+        current_slot = get_time_slot()
+    else:
+        current_slot = str(get_day_start_slot(target_date) + (24 * 60 * 60) - 600)
+
+    for device_config in config["devices"]:
+        if device_config["type"] != "victron":
+            continue
+        name = device_config["id"]
+        recovered = await asyncio.to_thread(
+            recover_victron_day_from_vrm,
+            name,
+            device_config,
+            current_slot,
+            target_date,
+        )
+        print(f"Recovered {recovered} Victron intervals from VRM for {name}")
+
+
 async def main():
+    args = parse_args()
+    if args.recover_victron_day:
+        await recover_victron_devices_for_day(parse_target_date(args.recover_victron_day))
+        return
+
     os.makedirs(DATA_DIR, exist_ok=True)
     save_metadata()
 

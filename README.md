@@ -78,6 +78,44 @@ Las muestras Victron pueden indicar `topic` o una lista `topics`; en ese caso
 se usa el primer valor MQTT disponible y se guarda como
 `<dispositivo>-<muestra>-YYYY-MM-DD.json`.
 
+### Recuperación Victron desde VRM
+
+Si el GX se queda sin conectividad local pero VRM acaba recibiendo el histórico,
+`collect.py` puede rellenar los huecos del día usando la API de VRM. Para
+activarlo, añade el id de instalación y el código VRM de cada muestra que quieras
+recuperar:
+
+```toml
+[[devices]]
+id = "victron1"
+type = "victron"
+ip = "192.168.4.198"
+vrm_site_id = "123456"
+vrm_token_env = "VICTRON_VRM_TOKEN"
+
+[[devices.samples]]
+id = "bateria"
+topic = "system/0/Dc/Battery/Power"
+vrm_attribute = "Pb"
+multiplier = -1
+digits = 1
+```
+
+El token se lee de `VICTRON_VRM_TOKEN` por defecto, o de la variable indicada en
+`vrm_token_env`. También puedes usar `vrm_token` en `config.toml`, aunque es
+preferible no guardar secretos en el repo.
+
+La recuperación se ejecuta tras cada recogida Victron si detecta slots del día
+sin valor o con error. También se puede lanzar manualmente:
+
+```bash
+python collect.py --recover-victron-day 2026-07-10
+```
+
+VRM entrega el histórico con intervalo mínimo de 15 minutos; Sungraphs guarda el
+punto recuperado en el slot de 10 minutos correspondiente y marca el intervalo
+con `source = "vrm_recovery"`.
+
 Además, cada recogida Victron actualiza `data/victron.json` con el último
 snapshot de todas sus muestras configuradas. El archivo contiene los equipos
 Victron por id, su `slot`, `iso_time` y un mapa `readings` con valores como
