@@ -12,6 +12,7 @@ from collect import (  # noqa: E402
     get_nearest_vrm_point,
     get_recoverable_vrm_points,
     get_goodwe_reading,
+    get_vrm_recovery_status,
     interval_needs_recovery,
     normalize_vrm_timestamp,
     get_victron_sample_value,
@@ -129,6 +130,13 @@ class TestVictronVrmRecovery(unittest.TestCase):
         self.assertTrue(interval_needs_recovery({"error": True}))
         self.assertTrue(interval_needs_recovery({"iso_time": "2026-07-10T00:00:00"}))
         self.assertFalse(interval_needs_recovery({"value": 0}))
+
+    def test_reports_missing_vrm_recovery_config(self):
+        status = get_vrm_recovery_status({"samples": [{"id": "fv"}]})
+
+        self.assertFalse(status["enabled"])
+        self.assertIn("vrm_site_id", status["missing"])
+        self.assertIn("vrm_attribute en al menos una muestra", status["missing"])
 
 
 class TestBuildVictronLatestDevice(unittest.TestCase):

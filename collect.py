@@ -355,6 +355,38 @@ def get_vrm_recovery_config(device_config):
     return {"site_id": str(site_id), "token": token, "attributes": attributes}
 
 
+def get_vrm_recovery_status(device_config):
+    site_id = device_config.get("vrm_site_id") or device_config.get("site_id")
+    token = get_vrm_token(device_config)
+    samples = device_config.get("samples", DEFAULT_VICTRON_SAMPLES)
+    attributes = []
+    sample_count = 0
+    for sample in samples:
+        sample_attributes = get_vrm_sample_attributes(sample)
+        if sample_attributes:
+            sample_count += 1
+        for attribute in sample_attributes:
+            if attribute not in attributes:
+                attributes.append(attribute)
+
+    missing = []
+    if not site_id:
+        missing.append("vrm_site_id")
+    if not token:
+        token_env = device_config.get("vrm_token_env", "VICTRON_VRM_TOKEN")
+        missing.append(f"{token_env} env var")
+    if not attributes:
+        missing.append("vrm_attribute en al menos una muestra")
+
+    return {
+        "enabled": not missing,
+        "missing": missing,
+        "site_id": str(site_id) if site_id else None,
+        "attribute_count": len(attributes),
+        "sample_count": sample_count,
+    }
+
+
 def fetch_vrm_stats(site_id, token, attributes, start, end, timeout=20):
     query = [
         ("type", "custom"),
@@ -810,6 +842,12 @@ async def recover_victron_devices_for_day(target_date):
         if device_config["type"] != "victron":
             continue
         name = device_config["id"]
+        status = get_vrm_recovery_status(device_config)
+        if not status["enabled"]:
+            missing = ", ".join(status["missing"])
+            print(f"Skipping VRM recovery for {name}: missing {missing}")
+            continue
+
         recovered = await asyncio.to_thread(
             recover_victron_day_from_vrm,
             name,
