@@ -406,6 +406,29 @@ def fetch_vrm_stats(site_id, token, attributes, start, end, timeout=20):
         return json.loads(response.read().decode("utf-8"))
 
 
+def fetch_vrm_data_attributes(token, timeout=20):
+    request = Request(
+        "https://vrmapi.victronenergy.com/v2/data-attributes",
+        headers={"x-authorization": f"Token {token}"},
+    )
+    with urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def iter_matching_vrm_attributes(attributes, query=None):
+    query_text = query.lower() if query else None
+    for attribute_id, attribute in sorted(
+        attributes.items(), key=lambda item: item[1].get("code", item[0])
+    ):
+        text = " ".join(
+            str(attribute.get(key, ""))
+            for key in ("code", "description", "formatWithUnit", "dataType")
+        )
+        if query_text and query_text not in text.lower():
+            continue
+        yield attribute_id, attribute
+
+
 def get_vrm_records(stats_response):
     records = stats_response.get("records", {})
     if isinstance(records, dict):
@@ -822,6 +845,13 @@ def parse_args():
         const=datetime.now().strftime("%Y-%m-%d"),
         help="Recupera huecos Victron de una fecha YYYY-MM-DD usando VRM y sale.",
     )
+    parser.add_argument(
+        "--list-vrm-attributes",
+        nargs="?",
+        const="",
+        metavar="QUERY",
+        help="Lista códigos de atributos VRM; opcionalmente filtra por texto.",
+    )
     return parser.parse_args()
 
 
@@ -858,8 +888,31 @@ async def recover_victron_devices_for_day(target_date):
         print(f"Recovered {recovered} Victron intervals from VRM for {name}")
 
 
+def list_vrm_attributes(query):
+    token = os.environ.get("VICTRON_VRM_TOKEN") or os.environ.get("VRM_TOKEN")
+    if not token:
+        raise ValueError("Falta VICTRON_VRM_TOKEN o VRM_TOKEN en el entorno.")
+
+    attributes = fetch_vrm_data_attributes(token)
+    matches = list(iter_matching_vrm_attributes(attributes, query or None))
+    if not matches:
+        print("No VRM attributes matched.")
+        return
+
+    for attribute_id, attribute in matches:
+        code = attribute.get("code", attribute_id)
+        description = attribute.get("description", "")
+        unit = attribute.get("formatWithUnit", "")
+        suffix = f" | {unit}" if unit else ""
+        print(f"{code}: {description}{suffix}")
+
+
 async def main():
     args = parse_args()
+    if args.list_vrm_attributes is not None:
+        list_vrm_attributes(args.list_vrm_attributes)
+        return
+
     if args.recover_victron_day:
         await recover_victron_devices_for_day(parse_target_date(args.recover_victron_day))
         return
