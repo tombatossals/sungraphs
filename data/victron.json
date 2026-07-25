@@ -3,56 +3,58 @@
     "victron1": {
       "id": "victron1",
       "label": "Victron Multiplus II GX",
-      "slot": "1784990400",
-      "iso_time": "2026-07-25T16:40:00",
+      "slot": "1784991000",
+      "iso_time": "2026-07-25T16:50:00",
       "readings": {
         "red": {
           "id": "red",
           "label": "Iberdrola",
-          "value": 36
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample red'"
         },
         "consumo": {
           "id": "consumo",
           "label": "Consumo casa",
-          "value": 3728.6
+          "value": 681.4
         },
         "cargas-criticas": {
           "id": "cargas-criticas",
           "label": "Cargas cr\u00edticas",
-          "value": 3728.6
+          "value": 681.4
         },
         "fv": {
           "id": "fv",
           "label": "Producci\u00f3n FV",
-          "value": 2982.6
+          "value": 1.4
         },
         "bateria": {
           "id": "bateria",
           "label": "Bater\u00eda",
-          "value": 831
+          "value": 593
         },
         "bateria-tension": {
           "id": "bateria-tension",
           "label": "Tensi\u00f3n bater\u00eda",
-          "value": 49.8
+          "value": 49.84
         },
         "bateria-corriente": {
           "id": "bateria-corriente",
           "label": "Corriente bater\u00eda",
-          "value": -16.7
+          "value": -11.9
         },
         "bateria-soc": {
           "id": "bateria-soc",
           "label": "SOC bater\u00eda",
-          "value": 98.0
+          "value": 97.0
         },
         "bateria-temperatura": {
           "id": "bateria-temperatura",
           "label": "Temperatura bater\u00eda",
-          "value": 38.5
+          "value": 38.6
         }
       }
     }
   },
-  "generated_at": "2026-07-25T14:40:07.704998+00:00"
+  "generated_at": "2026-07-25T14:50:07.917395+00:00"
 }
