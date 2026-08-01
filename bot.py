@@ -224,7 +224,6 @@ async def cmd_estado(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # ── Consumo / Red / Batería ──
     consumo = latest_value(devices.get("victron1-consumo", {}))
     red = latest_value(devices.get("victron1-red", {}))
-    criticas = latest_value(devices.get("victron1-cargas-criticas", {}))
     bateria = latest_value(devices.get("victron1-bateria", {}))
     soc = latest_value(devices.get("victron1-bateria-soc", {}))
     temp = latest_value(devices.get("victron1-bateria-temperatura", {}))
@@ -247,7 +246,6 @@ async def cmd_estado(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg += (
         f"🏠 *Consumo casa:* {format_watts(consumo)}\n"
         f"🔌 *Red (Iberdrola):* {format_watts(red)}\n"
-        f"⚙️ *Cargas críticas:* {format_watts(criticas)}\n"
     )
     if bateria is not None or soc is not None:
         msg += f"🔋 *Batería:* {format_watts(bateria)} | SOC: {format_pct(soc)} | {format_celsius(temp)}\n"
@@ -302,7 +300,6 @@ async def cmd_hoy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg += "\n🏠 *Consumo (último):*\n"
     for dev_id, label in [
         ("victron1-consumo", "Casa"),
-        ("victron1-cargas-criticas", "Críticas"),
         ("victron1-red", "Red"),
     ]:
         if dev_id in devices:

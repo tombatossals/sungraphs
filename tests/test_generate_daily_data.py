@@ -27,8 +27,8 @@ class TestValidateDate(unittest.TestCase):
 
 class TestGetDeviceId(unittest.TestCase):
     def test_extracts_device_id(self):
-        path = Path("/fake/data/victron1-cargas-criticas-2026-06-14.json")
-        self.assertEqual(get_device_id(path, "2026-06-14"), "victron1-cargas-criticas")
+        path = Path("/fake/data/victron1-bateria-soc-2026-06-14.json")
+        self.assertEqual(get_device_id(path, "2026-06-14"), "victron1-bateria-soc")
 
     def test_raises_on_unexpected_name(self):
         with self.assertRaises(ValueError):

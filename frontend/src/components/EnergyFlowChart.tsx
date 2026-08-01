@@ -46,7 +46,6 @@ const FALLBACK_PRODUCTION_METRICS: Metric[] = [
 
 const CONSUMPTION_METRICS: Metric[] = [
   { id: "victron1-consumo", label: "Consumo casa", color: "#f39c12", kind: "consumption", getValue: getVictronValue },
-  { id: "victron1-cargas-criticas", label: "Cargas críticas", color: "#3498db", kind: "consumption", getValue: getVictronValue },
   { id: "victron1-red", label: "Red eléctrica", color: "#e74c3c", kind: "consumption", getValue: getVictronValue },
   { id: "victron1-bateria", label: "Batería", color: "#8e44ad", kind: "consumption", getValue: getVictronValue },
 ];
