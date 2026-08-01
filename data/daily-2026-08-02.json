@@ -1,0 +1,205 @@
+{
+  "date": "2026-08-02",
+  "generated_at": "2026-08-01T22:00:13.410554+00:00",
+  "metadata": {
+    "devices": [
+      {
+        "id": "goodwe1",
+        "type": "goodwe_sems",
+        "label": "GoodWe DNS-5000"
+      },
+      {
+        "id": "victron1",
+        "type": "victron",
+        "label": "Victron Multiplus II GX",
+        "samples": [
+          {
+            "id": "red",
+            "label": "Iberdrola"
+          },
+          {
+            "id": "consumo",
+            "label": "Consumo casa"
+          },
+          {
+            "id": "fv",
+            "label": "Producci\u00f3n FV"
+          },
+          {
+            "id": "bateria",
+            "label": "Bater\u00eda"
+          },
+          {
+            "id": "bateria-tension",
+            "label": "Tensi\u00f3n bater\u00eda"
+          },
+          {
+            "id": "bateria-corriente",
+            "label": "Corriente bater\u00eda"
+          },
+          {
+            "id": "bateria-soc",
+            "label": "SOC bater\u00eda"
+          },
+          {
+            "id": "bateria-temperatura",
+            "label": "Temperatura bater\u00eda"
+          }
+        ]
+      },
+      {
+        "id": "apsystems1",
+        "type": "apsystems",
+        "label": "Microinversor APSystems 1"
+      },
+      {
+        "id": "apsystems2",
+        "type": "apsystems",
+        "label": "Microinversor APSystems 2"
+      },
+      {
+        "id": "apsystems3",
+        "type": "apsystems",
+        "label": "Microinversor APSystems 3"
+      }
+    ]
+  },
+  "skipped_files": [],
+  "devices": {
+    "goodwe1": {
+      "date": "02/08/2026",
+      "totals": {
+        "p1": 23900.0,
+        "p2": 0
+      },
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0,
+          "temperature": 0.0,
+          "status": -1,
+          "sems_time": "08/02/2026 00:00:03"
+        }
+      },
+      "total_kwh": 38872.3
+    },
+    "victron1-red": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 46
+        }
+      }
+    },
+    "victron1-consumo": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 884.9
+        }
+      }
+    },
+    "victron1-fv": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 1.9
+        }
+      }
+    },
+    "victron1-bateria": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 913
+        }
+      }
+    },
+    "victron1-bateria-tension": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 49.1
+        }
+      }
+    },
+    "victron1-bateria-corriente": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": -18.6
+        }
+      }
+    },
+    "victron1-bateria-soc": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 50.0
+        }
+      }
+    },
+    "victron1-bateria-temperatura": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "value": 34.8
+        }
+      }
+    },
+    "apsystems1": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
+        }
+      }
+    },
+    "apsystems2": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        }
+      }
+    },
+    "apsystems3": {
+      "date": "02/08/2026",
+      "totals": {},
+      "intervals": {
+        "1785621600": {
+          "iso_time": "2026-08-02T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        }
+      }
+    }
+  }
+}
