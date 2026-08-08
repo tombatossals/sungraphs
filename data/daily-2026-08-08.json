@@ -1,6 +1,6 @@
 {
   "date": "2026-08-08",
-  "generated_at": "2026-08-08T05:20:12.023985+00:00",
+  "generated_at": "2026-08-08T05:30:11.674575+00:00",
   "metadata": {
     "devices": [
       {
@@ -477,6 +477,15 @@
           "temperature": 25.3,
           "status": 0,
           "sems_time": "08/08/2026 07:20:02"
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0,
+          "temperature": 25.5,
+          "status": 0,
+          "sems_time": "08/08/2026 07:30:02"
         }
       },
       "total_kwh": 38991.3
@@ -664,6 +673,10 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 389
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 417
         }
       }
     },
@@ -850,6 +863,10 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 364.1
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 457.9
         }
       }
     },
@@ -1036,6 +1053,10 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 2.1
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 60.9
         }
       }
     },
@@ -1221,6 +1242,10 @@
         },
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
+          "value": 0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
           "value": 0
         }
       }
@@ -1408,6 +1433,10 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 49.03
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 49.06
         }
       }
     },
@@ -1593,6 +1622,10 @@
         },
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
+          "value": 0.0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
           "value": 0.0
         }
       }
@@ -1780,6 +1813,10 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 31.0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 31.0
         }
       }
     },
@@ -1966,14 +2003,18 @@
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
           "value": 30.8
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "value": 30.8
         }
       }
     },
     "apsystems1": {
       "date": "08/08/2026",
       "totals": {
-        "p1": 0.11,
-        "p2": 0.01
+        "p1": 0.28,
+        "p2": 0.08
       },
       "intervals": {
         "1786140000": {
@@ -2245,13 +2286,304 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "p1": 3.0,
+          "p2": 3.0,
+          "total_w": 6.0
         }
       }
     },
     "apsystems2": {
       "date": "08/08/2026",
       "totals": {
-        "p1": 0.1,
+        "p1": 0.23,
+        "p2": 0.08
+      },
+      "intervals": {
+        "1786140000": {
+          "iso_time": "2026-08-08T00:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786140600": {
+          "iso_time": "2026-08-08T00:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786141200": {
+          "iso_time": "2026-08-08T00:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786141800": {
+          "iso_time": "2026-08-08T00:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786142400": {
+          "iso_time": "2026-08-08T00:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786143000": {
+          "iso_time": "2026-08-08T00:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786143600": {
+          "iso_time": "2026-08-08T01:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786144200": {
+          "iso_time": "2026-08-08T01:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786144800": {
+          "iso_time": "2026-08-08T01:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786145400": {
+          "iso_time": "2026-08-08T01:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786146000": {
+          "iso_time": "2026-08-08T01:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786146600": {
+          "iso_time": "2026-08-08T01:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786147200": {
+          "iso_time": "2026-08-08T02:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786147800": {
+          "iso_time": "2026-08-08T02:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786148400": {
+          "iso_time": "2026-08-08T02:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786149000": {
+          "iso_time": "2026-08-08T02:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786149600": {
+          "iso_time": "2026-08-08T02:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786150200": {
+          "iso_time": "2026-08-08T02:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786150800": {
+          "iso_time": "2026-08-08T03:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786151400": {
+          "iso_time": "2026-08-08T03:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786152000": {
+          "iso_time": "2026-08-08T03:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786152600": {
+          "iso_time": "2026-08-08T03:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786153200": {
+          "iso_time": "2026-08-08T03:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786153800": {
+          "iso_time": "2026-08-08T03:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786154400": {
+          "iso_time": "2026-08-08T04:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786155000": {
+          "iso_time": "2026-08-08T04:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786155600": {
+          "iso_time": "2026-08-08T04:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786156200": {
+          "iso_time": "2026-08-08T04:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786156800": {
+          "iso_time": "2026-08-08T04:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786157400": {
+          "iso_time": "2026-08-08T04:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786158000": {
+          "iso_time": "2026-08-08T05:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786158600": {
+          "iso_time": "2026-08-08T05:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786159200": {
+          "iso_time": "2026-08-08T05:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786159800": {
+          "iso_time": "2026-08-08T05:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786160400": {
+          "iso_time": "2026-08-08T05:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786161000": {
+          "iso_time": "2026-08-08T05:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786161600": {
+          "iso_time": "2026-08-08T06:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786162200": {
+          "iso_time": "2026-08-08T06:10:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786162800": {
+          "iso_time": "2026-08-08T06:20:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786163400": {
+          "iso_time": "2026-08-08T06:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786164000": {
+          "iso_time": "2026-08-08T06:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786164600": {
+          "iso_time": "2026-08-08T06:50:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786165200": {
+          "iso_time": "2026-08-08T07:00:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1786165800": {
+          "iso_time": "2026-08-08T07:10:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
+        },
+        "1786166400": {
+          "iso_time": "2026-08-08T07:20:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
+          "p1": 3.0,
+          "p2": 2.0,
+          "total_w": 5.0
+        }
+      }
+    },
+    "apsystems3": {
+      "date": "08/08/2026",
+      "totals": {
+        "p1": 0.08,
         "p2": 0.02
       },
       "intervals": {
@@ -2259,285 +2591,6 @@
           "iso_time": "2026-08-08T00:00:00",
           "error": true,
           "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786140600": {
-          "iso_time": "2026-08-08T00:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786141200": {
-          "iso_time": "2026-08-08T00:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786141800": {
-          "iso_time": "2026-08-08T00:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786142400": {
-          "iso_time": "2026-08-08T00:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786143000": {
-          "iso_time": "2026-08-08T00:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786143600": {
-          "iso_time": "2026-08-08T01:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786144200": {
-          "iso_time": "2026-08-08T01:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786144800": {
-          "iso_time": "2026-08-08T01:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786145400": {
-          "iso_time": "2026-08-08T01:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786146000": {
-          "iso_time": "2026-08-08T01:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786146600": {
-          "iso_time": "2026-08-08T01:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786147200": {
-          "iso_time": "2026-08-08T02:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786147800": {
-          "iso_time": "2026-08-08T02:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786148400": {
-          "iso_time": "2026-08-08T02:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786149000": {
-          "iso_time": "2026-08-08T02:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786149600": {
-          "iso_time": "2026-08-08T02:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786150200": {
-          "iso_time": "2026-08-08T02:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786150800": {
-          "iso_time": "2026-08-08T03:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786151400": {
-          "iso_time": "2026-08-08T03:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786152000": {
-          "iso_time": "2026-08-08T03:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786152600": {
-          "iso_time": "2026-08-08T03:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786153200": {
-          "iso_time": "2026-08-08T03:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786153800": {
-          "iso_time": "2026-08-08T03:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786154400": {
-          "iso_time": "2026-08-08T04:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786155000": {
-          "iso_time": "2026-08-08T04:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786155600": {
-          "iso_time": "2026-08-08T04:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786156200": {
-          "iso_time": "2026-08-08T04:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786156800": {
-          "iso_time": "2026-08-08T04:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786157400": {
-          "iso_time": "2026-08-08T04:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786158000": {
-          "iso_time": "2026-08-08T05:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786158600": {
-          "iso_time": "2026-08-08T05:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786159200": {
-          "iso_time": "2026-08-08T05:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786159800": {
-          "iso_time": "2026-08-08T05:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786160400": {
-          "iso_time": "2026-08-08T05:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786161000": {
-          "iso_time": "2026-08-08T05:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786161600": {
-          "iso_time": "2026-08-08T06:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786162200": {
-          "iso_time": "2026-08-08T06:10:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786162800": {
-          "iso_time": "2026-08-08T06:20:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786163400": {
-          "iso_time": "2026-08-08T06:30:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786164000": {
-          "iso_time": "2026-08-08T06:40:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786164600": {
-          "iso_time": "2026-08-08T06:50:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786165200": {
-          "iso_time": "2026-08-08T07:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
-          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
-        },
-        "1786165800": {
-          "iso_time": "2026-08-08T07:10:00",
-          "p1": 0.0,
-          "p2": 0.0,
-          "total_w": 0.0
-        },
-        "1786166400": {
-          "iso_time": "2026-08-08T07:20:00",
-          "p1": 0.0,
-          "p2": 0.0,
-          "total_w": 0.0
-        }
-      }
-    },
-    "apsystems3": {
-      "date": "08/08/2026",
-      "totals": {
-        "p1": 0.03,
-        "p2": 0.0
-      },
-      "intervals": {
-        "1786140000": {
-          "iso_time": "2026-08-08T00:00:00",
-          "error": true,
-          "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
         },
         "1786140600": {
@@ -2800,6 +2853,12 @@
         },
         "1786166400": {
           "iso_time": "2026-08-08T07:20:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
+        },
+        "1786167000": {
+          "iso_time": "2026-08-08T07:30:00",
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
