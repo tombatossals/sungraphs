@@ -1,6 +1,6 @@
 {
   "date": "2026-08-09",
-  "generated_at": "2026-08-09T15:40:10.296695+00:00",
+  "generated_at": "2026-08-09T17:07:16.413164+00:00",
   "metadata": {
     "devices": [
       {
@@ -20,6 +20,18 @@
           {
             "id": "consumo",
             "label": "Consumo casa"
+          },
+          {
+            "id": "shelly-pro-3em-l1",
+            "label": "Shelly Pro 3EM L1"
+          },
+          {
+            "id": "shelly-pro-3em-l2",
+            "label": "Shelly Pro 3EM L2"
+          },
+          {
+            "id": "shelly-pro-3em-l3",
+            "label": "Shelly Pro 3EM L3"
           },
           {
             "id": "fv",
@@ -61,6 +73,25 @@
         "id": "apsystems3",
         "type": "apsystems",
         "label": "Microinversor APSystems 3"
+      },
+      {
+        "id": "shelly1",
+        "type": "shelly_em",
+        "label": "Shelly Pro 3EM",
+        "samples": [
+          {
+            "id": "criticas",
+            "label": "Cargas cr\u00edticas"
+          },
+          {
+            "id": "secundarias",
+            "label": "Cargas secundarias"
+          },
+          {
+            "id": "aac",
+            "label": "Aires acondicionados"
+          }
+        ]
       }
     ]
   },
@@ -69,8 +100,8 @@
     "goodwe1": {
       "date": "09/08/2026",
       "totals": {
-        "p1": 14651.91,
-        "p2": 6048.09
+        "p1": 19818.7,
+        "p2": 2681.3
       },
       "intervals": {
         "1786226400": {
@@ -1035,9 +1066,18 @@
           "temperature": 44.8,
           "status": 1,
           "sems_time": "08/09/2026 17:40:02"
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "p1": 699.23,
+          "p2": 94.6,
+          "total_w": 819.0,
+          "temperature": 40.3,
+          "status": 1,
+          "sems_time": "08/09/2026 19:07:08"
         }
       },
-      "total_kwh": 39035.2
+      "total_kwh": 39037.0
     },
     "victron1-red": {
       "date": "09/08/2026",
@@ -1470,6 +1510,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 46
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 9
         }
       }
     },
@@ -1904,6 +1948,46 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 868.9
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 2564.5
+        }
+      }
+    },
+    "victron1-shelly-pro-3em-l1": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        }
+      }
+    },
+    "victron1-shelly-pro-3em-l2": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        }
+      }
+    },
+    "victron1-shelly-pro-3em-l3": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -2338,6 +2422,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 1873.9
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 858.5
         }
       }
     },
@@ -2772,6 +2860,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": -940
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 1868
         }
       }
     },
@@ -3206,6 +3298,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 50.28
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 49.7
         }
       }
     },
@@ -3640,6 +3736,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 18.7
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": -37.6
         }
       }
     },
@@ -4074,6 +4174,10 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 74.0
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 79.0
         }
       }
     },
@@ -4508,14 +4612,18 @@
         "1786290000": {
           "iso_time": "2026-08-09T17:40:00",
           "value": 37.6
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 37.3
         }
       }
     },
     "apsystems1": {
       "date": "09/08/2026",
       "totals": {
-        "p1": 1512.82,
-        "p2": 1558.72
+        "p1": 1539.67,
+        "p2": 1588.1
       },
       "intervals": {
         "1786226400": {
@@ -5159,14 +5267,20 @@
           "p1": 22.0,
           "p2": 26.0,
           "total_w": 48.0
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "p1": 15.0,
+          "p2": 14.0,
+          "total_w": 29.0
         }
       }
     },
     "apsystems2": {
       "date": "09/08/2026",
       "totals": {
-        "p1": 1243.75,
-        "p2": 1120.64
+        "p1": 1363.72,
+        "p2": 1233.57
       },
       "intervals": {
         "1786226400": {
@@ -5810,14 +5924,20 @@
           "p1": 116.0,
           "p2": 125.0,
           "total_w": 241.0
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "p1": 54.0,
+          "p2": 12.0,
+          "total_w": 66.0
         }
       }
     },
     "apsystems3": {
       "date": "09/08/2026",
       "totals": {
-        "p1": 1534.41,
-        "p2": 1170.05
+        "p1": 1636.7,
+        "p2": 1210.5
       },
       "intervals": {
         "1786226400": {
@@ -6461,6 +6581,42 @@
           "p1": 114.0,
           "p2": 42.0,
           "total_w": 156.0
+        },
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "p1": 30.0,
+          "p2": 16.0,
+          "total_w": 46.0
+        }
+      }
+    },
+    "shelly1-criticas": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 542.6
+        }
+      }
+    },
+    "shelly1-secundarias": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 1930.5
+        }
+      }
+    },
+    "shelly1-aac": {
+      "date": "09/08/2026",
+      "totals": {},
+      "intervals": {
+        "1786294800": {
+          "iso_time": "2026-08-09T19:00:00",
+          "value": 14.3
         }
       }
     }
