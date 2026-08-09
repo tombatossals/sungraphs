@@ -223,6 +223,9 @@ async def cmd_estado(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # ── Consumo / Red / Batería ──
     consumo = latest_value(devices.get("victron1-consumo", {}))
+    shelly_l1 = latest_value(devices.get("victron1-shelly-pro-3em-l1", {}))
+    shelly_l2 = latest_value(devices.get("victron1-shelly-pro-3em-l2", {}))
+    shelly_l3 = latest_value(devices.get("victron1-shelly-pro-3em-l3", {}))
     red = latest_value(devices.get("victron1-red", {}))
     bateria = latest_value(devices.get("victron1-bateria", {}))
     soc = latest_value(devices.get("victron1-bateria-soc", {}))
@@ -247,6 +250,21 @@ async def cmd_estado(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🏠 *Consumo casa:* {format_watts(consumo)}\n"
         f"🔌 *Red (Iberdrola):* {format_watts(red)}\n"
     )
+    if shelly_l1 is not None or shelly_l2 is not None or shelly_l3 is not None:
+        msg += (
+            f"📟 *Shelly Pro 3EM L1:* {format_watts(shelly_l1)}\n"
+            f"📟 *Shelly Pro 3EM L2:* {format_watts(shelly_l2)}\n"
+            f"📟 *Shelly Pro 3EM L3:* {format_watts(shelly_l3)}\n"
+        )
+    criticas = latest_value(devices.get("shelly1-criticas", {}))
+    secundarias = latest_value(devices.get("shelly1-secundarias", {}))
+    aac = latest_value(devices.get("shelly1-aac", {}))
+    if criticas is not None or secundarias is not None or aac is not None:
+        msg += (
+            f"⚙️ *Cargas críticas:* {format_watts(criticas)}\n"
+            f"⚙️ *Cargas secundarias:* {format_watts(secundarias)}\n"
+            f"⚙️ *Aires acondicionados:* {format_watts(aac)}\n"
+        )
     if bateria is not None or soc is not None:
         msg += f"🔋 *Batería:* {format_watts(bateria)} | SOC: {format_pct(soc)} | {format_celsius(temp)}\n"
     if balance_str:
@@ -300,7 +318,13 @@ async def cmd_hoy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg += "\n🏠 *Consumo (último):*\n"
     for dev_id, label in [
         ("victron1-consumo", "Casa"),
+        ("victron1-shelly-pro-3em-l1", "Shelly L1"),
+        ("victron1-shelly-pro-3em-l2", "Shelly L2"),
+        ("victron1-shelly-pro-3em-l3", "Shelly L3"),
         ("victron1-red", "Red"),
+        ("shelly1-criticas", "Cargas críticas"),
+        ("shelly1-secundarias", "Cargas secundarias"),
+        ("shelly1-aac", "Aires acondicionados"),
     ]:
         if dev_id in devices:
             lv = latest_value(devices[dev_id])

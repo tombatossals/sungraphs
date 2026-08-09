@@ -31,6 +31,9 @@ interface Props {
 const METRICS = [
   { id: "victron1-fv", label: "Producción FV", color: "#27ae60" },
   { id: "victron1-consumo", label: "Consumo Casa", color: "#f39c12" },
+  { id: "victron1-shelly-pro-3em-l1", label: "Shelly Pro 3EM L1", color: "#3498db" },
+  { id: "victron1-shelly-pro-3em-l2", label: "Shelly Pro 3EM L2", color: "#1abc9c" },
+  { id: "victron1-shelly-pro-3em-l3", label: "Shelly Pro 3EM L3", color: "#34495e" },
   { id: "victron1-red", label: "Red Eléctrica", color: "#e74c3c" },
   { id: "victron1-bateria", label: "Batería", color: "#8e44ad" },
 ];

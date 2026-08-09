@@ -71,7 +71,7 @@ def get_expected_device_ids(metadata: dict[str, Any] | None) -> list[str]:
         if not isinstance(device_id, str):
             continue
 
-        if device_type == "victron":
+        if device_type in ("victron", "shelly_em"):
             for sample in device.get("samples", []):
                 sample_id = sample.get("id")
                 if isinstance(sample_id, str):

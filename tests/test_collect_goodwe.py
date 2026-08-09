@@ -96,6 +96,16 @@ class TestGetVictronSampleValue(unittest.TestCase):
 
         self.assertEqual(get_victron_sample_value(values, "portal", sample), 27.3)
 
+    def test_uses_mqtt_topic_pattern(self):
+        sample = {
+            "id": "shelly-pro-3em-l1",
+            "topic_patterns": ["acload/+/Ac/L1/Power"],
+            "digits": 1,
+        }
+        values = {"N/portal/acload/42/Ac/L1/Power": 1234.56}
+
+        self.assertEqual(get_victron_sample_value(values, "portal", sample), 1234.6)
+
 
 class TestVictronVrmRecovery(unittest.TestCase):
     def test_normalizes_vrm_millisecond_timestamps(self):

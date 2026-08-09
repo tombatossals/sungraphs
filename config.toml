@@ -27,6 +27,24 @@ topic = "system/0/Ac/Consumption/L1/Power"
 digits = 1
 
 [[devices.samples]]
+id = "shelly-pro-3em-l1"
+label = "Shelly Pro 3EM L1"
+topic_patterns = ["acload/+/Ac/L1/Power"]
+digits = 1
+
+[[devices.samples]]
+id = "shelly-pro-3em-l2"
+label = "Shelly Pro 3EM L2"
+topic_patterns = ["acload/+/Ac/L2/Power"]
+digits = 1
+
+[[devices.samples]]
+id = "shelly-pro-3em-l3"
+label = "Shelly Pro 3EM L3"
+topic_patterns = ["acload/+/Ac/L3/Power"]
+digits = 1
+
+[[devices.samples]]
 id = "fv"
 label = "Producción FV"
 topics = [
@@ -89,3 +107,27 @@ type = "apsystems"
 label = "Microinversor APSystems 3"
 ip = "192.168.5.43"
 port = 8050
+
+[[devices]]
+id = "shelly1"
+type = "shelly_em"
+label = "Shelly Pro 3EM"
+ip = "192.168.5.25"
+
+[[devices.samples]]
+id = "criticas"
+label = "Cargas críticas"
+em_id = 1
+digits = 1
+
+[[devices.samples]]
+id = "secundarias"
+label = "Cargas secundarias"
+em_id = 0
+digits = 1
+
+[[devices.samples]]
+id = "aac"
+label = "Aires acondicionados"
+em_id = 2
+digits = 1

@@ -170,12 +170,18 @@ def save_metadata():
             "label": device.get("label", device["id"]),
         }
         if device["type"] == "victron":
+            samples = device.get("samples", DEFAULT_VICTRON_SAMPLES)
+        elif device["type"] == "shelly_em":
+            samples = device.get("samples", [])
+        else:
+            samples = None
+        if samples is not None:
             device_metadata["samples"] = [
                 {
                     "id": sample["id"],
                     "label": sample.get("label", sample["id"]),
                 }
-                for sample in device.get("samples", DEFAULT_VICTRON_SAMPLES)
+                for sample in samples
             ]
         metadata["devices"].append(device_metadata)
 
@@ -262,9 +268,48 @@ def get_sample_topics(sample):
     return []
 
 
+def get_sample_topic_patterns(sample):
+    if "topic_patterns" in sample:
+        return sample["topic_patterns"]
+    if "topic_pattern" in sample:
+        return [sample["topic_pattern"]]
+    return []
+
+
+def mqtt_topic_matches(pattern, topic):
+    pattern_parts = pattern.split("/")
+    topic_parts = topic.split("/")
+
+    for index, pattern_part in enumerate(pattern_parts):
+        if pattern_part == "#":
+            return index == len(pattern_parts) - 1
+        if index >= len(topic_parts):
+            return False
+        if pattern_part != "+" and pattern_part != topic_parts[index]:
+            return False
+
+    return len(topic_parts) == len(pattern_parts)
+
+
+def get_victron_pattern_value(values, portal_id, pattern):
+    full_pattern = pattern if pattern.startswith("N/") else f"N/{portal_id}/{pattern}"
+    for topic in sorted(values.keys()):
+        if mqtt_topic_matches(full_pattern, topic):
+            value = values.get(topic)
+            if value is not None:
+                return value
+    return None
+
+
 def get_victron_sample_value(values, portal_id, sample):
     for topic in get_sample_topics(sample):
         value = values.get(f"N/{portal_id}/{topic}")
+        if value is not None:
+            multiplier = sample.get("multiplier", 1)
+            digits = sample.get("digits", 1)
+            return round_optional(value * multiplier, digits)
+    for pattern in get_sample_topic_patterns(sample):
+        value = get_victron_pattern_value(values, portal_id, pattern)
         if value is not None:
             multiplier = sample.get("multiplier", 1)
             digits = sample.get("digits", 1)
@@ -721,6 +766,65 @@ async def collect_victron_device(name, device_config, slot):
         print(f"Error recovering Victron intervals from VRM for {name}: {exc}")
 
 
+def get_shelly_em_value(payload, sample):
+    field = sample.get("field", "act_power")
+    value = to_float(payload.get(field))
+    if value is None:
+        return None
+    multiplier = sample.get("multiplier", 1)
+    digits = sample.get("digits", 1)
+    return round_optional(value * multiplier, digits)
+
+
+def collect_shelly_em_snapshot(device_config):
+    readings = {}
+    for sample in device_config.get("samples", []):
+        sample_id = sample["id"]
+        em_id = sample.get("em_id")
+        url = f"http://{device_config['ip']}/rpc/EM1.GetStatus?id={em_id}"
+        timeout = device_config.get("http_timeout", 5)
+        try:
+            with urlopen(Request(url), timeout=timeout) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+            readings[sample_id] = get_shelly_em_value(payload, sample)
+        except Exception:
+            readings[sample_id] = None
+
+    if not any(value is not None for value in readings.values()):
+        raise TimeoutError("No response from Shelly EM")
+    return readings
+
+
+async def collect_shelly_em(name, device_config, slot):
+    samples = device_config.get("samples", [])
+    shelly_error = None
+    try:
+        snapshot = await asyncio.to_thread(collect_shelly_em_snapshot, device_config)
+        if snapshot is None:
+            raise TimeoutError("No response from Shelly EM")
+    except Exception as exc:
+        snapshot = None
+        shelly_error = exc
+
+    for sample in samples:
+        sample_id = sample["id"]
+        filepath = get_filepath(f"{name}-{sample_id}")
+        data = load_or_create_json(filepath)
+        data["intervals"][slot] = {
+            "iso_time": datetime.fromtimestamp(int(slot)).isoformat(),
+        }
+
+        if snapshot is None or snapshot.get(sample_id) is None:
+            mark_error(
+                data["intervals"][slot],
+                shelly_error or KeyError(f"Missing Shelly sample {sample_id}"),
+            )
+        else:
+            data["intervals"][slot]["value"] = snapshot[sample_id]
+
+        save_json(filepath, data)
+
+
 def get_first_goodwe_inverter(sems_data):
     inverters = sems_data.get("inverter", [])
     if isinstance(inverters, list) and inverters:
@@ -932,6 +1036,8 @@ async def main():
             await collect_goodwe_sems(name, device_config, slot)
         elif device_type == "victron":
             await collect_victron_device(name, device_config, slot)
+        elif device_type == "shelly_em":
+            await collect_shelly_em(name, device_config, slot)
         else:
             raise ValueError(f"Unsupported device type: {device_type}")
 

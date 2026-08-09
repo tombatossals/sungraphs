@@ -35,7 +35,7 @@ export default function App() {
           )
         )}
         <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} metadata={metadata} />
-        {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-")) && (
+        {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-") || k.startsWith("shelly1-")) && (
           <VictronStats dailyData={dailyData} metadata={metadata} />
         )}
         <EnergyFlowChart dailyData={dailyData} metadata={metadata} />
