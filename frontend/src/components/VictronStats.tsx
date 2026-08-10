@@ -9,9 +9,6 @@ interface Props {
 const VICTRON_META: Record<string, { label: string; color: string }> = {
   "victron1-fv": { label: "Producción FV", color: "#27ae60" },
   "victron1-consumo": { label: "Consumo Casa", color: "#f39c12" },
-  "victron1-shelly-pro-3em-l1": { label: "Shelly Pro 3EM L1", color: "#3498db" },
-  "victron1-shelly-pro-3em-l2": { label: "Shelly Pro 3EM L2", color: "#1abc9c" },
-  "victron1-shelly-pro-3em-l3": { label: "Shelly Pro 3EM L3", color: "#34495e" },
   "victron1-red": { label: "Red Eléctrica", color: "#e74c3c" },
   "victron1-bateria": { label: "Batería", color: "#8e44ad" },
   "victron1-bateria-soc": { label: "SOC Batería", color: "#2ecc71" },
@@ -23,9 +20,6 @@ const VICTRON_META: Record<string, { label: string; color: string }> = {
 
 const VICTRON_SUMMARY_META: Record<string, { label: string; color: string }> = {
   "victron1-consumo": { label: "Consumo Casa", color: "#f39c12" },
-  "victron1-shelly-pro-3em-l1": { label: "Shelly Pro 3EM L1", color: "#3498db" },
-  "victron1-shelly-pro-3em-l2": { label: "Shelly Pro 3EM L2", color: "#1abc9c" },
-  "victron1-shelly-pro-3em-l3": { label: "Shelly Pro 3EM L3", color: "#34495e" },
   "victron1-red": { label: "Iberdrola", color: "#e74c3c" },
   "victron1-bateria": { label: "Batería", color: "#8e44ad" },
   "victron1-bateria-soc": { label: "SOC Batería", color: "#2ecc71" },
@@ -37,9 +31,6 @@ const VICTRON_SUMMARY_META: Record<string, { label: string; color: string }> = {
 
 const VICTRON_SUMMARY_ORDER = [
   "victron1-consumo",
-  "victron1-shelly-pro-3em-l1",
-  "victron1-shelly-pro-3em-l2",
-  "victron1-shelly-pro-3em-l3",
   "victron1-red",
   "victron1-bateria",
   "victron1-bateria-soc",
@@ -51,9 +42,6 @@ const VICTRON_SUMMARY_ORDER = [
 
 const VICTRON_ORDER = [
   "victron1-consumo",
-  "victron1-shelly-pro-3em-l1",
-  "victron1-shelly-pro-3em-l2",
-  "victron1-shelly-pro-3em-l3",
   "victron1-red",
   "victron1-bateria",
   "victron1-bateria-soc",
