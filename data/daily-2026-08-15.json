@@ -1,6 +1,6 @@
 {
   "date": "2026-08-15",
-  "generated_at": "2026-08-15T18:30:34.358243+00:00",
+  "generated_at": "2026-08-15T18:40:19.261051+00:00",
   "metadata": {
     "devices": [
       {
@@ -1219,6 +1219,15 @@
           "temperature": 29.1,
           "status": 1,
           "sems_time": "08/15/2026 20:30:03"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 49.0,
+          "temperature": 29.4,
+          "status": 1,
+          "sems_time": "08/15/2026 20:40:04"
         }
       },
       "total_kwh": 39157.0
@@ -1722,6 +1731,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 11
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 9
         }
       }
     },
@@ -2224,6 +2237,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 418.7
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 688.1
         }
       }
     },
@@ -2971,6 +2988,12 @@
         },
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -3724,6 +3747,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -4474,6 +4503,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -4976,6 +5011,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": -15.3
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 4.1
         }
       }
     },
@@ -5478,6 +5517,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 458
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 723
         }
       }
     },
@@ -5980,6 +6023,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 49.27
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 49.23
         }
       }
     },
@@ -6482,6 +6529,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": -9.3
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": -14.7
         }
       }
     },
@@ -6984,6 +7035,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 58.0
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 57.0
         }
       }
     },
@@ -7486,6 +7541,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 35.0
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 34.9
         }
       }
     },
@@ -8238,6 +8297,12 @@
           "iso_time": "2026-08-15T20:30:00",
           "error": true,
           "error_type": "TimeoutError"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
         }
       }
     },
@@ -8990,6 +9055,12 @@
           "iso_time": "2026-08-15T20:30:00",
           "error": true,
           "error_type": "TimeoutError"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
         }
       }
     },
@@ -9742,6 +9813,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
         }
       }
     },
@@ -10244,6 +10321,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 354.8
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 553.6
         }
       }
     },
@@ -10746,6 +10827,10 @@
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
           "value": 30.0
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
+          "value": 74.9
         }
       }
     },
@@ -11247,6 +11332,10 @@
         },
         "1786818600": {
           "iso_time": "2026-08-15T20:30:00",
+          "value": 33.2
+        },
+        "1786819200": {
+          "iso_time": "2026-08-15T20:40:00",
           "value": 33.2
         }
       }
