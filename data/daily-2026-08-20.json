@@ -1,6 +1,6 @@
 {
   "date": "2026-08-20",
-  "generated_at": "2026-08-20T17:30:21.345861+00:00",
+  "generated_at": "2026-08-20T17:40:33.359601+00:00",
   "metadata": {
     "devices": [
       {
@@ -1165,6 +1165,15 @@
           "temperature": 27.1,
           "status": 1,
           "sems_time": "08/20/2026 19:30:03"
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 49.0,
+          "temperature": 26.9,
+          "status": 1,
+          "sems_time": "08/20/2026 19:40:03"
         }
       },
       "total_kwh": 39260.8
@@ -1644,6 +1653,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 797
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 975
         }
       }
     },
@@ -2122,6 +2135,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 790.6
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 960.9
         }
       }
     },
@@ -2833,6 +2850,12 @@
         },
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -3550,6 +3573,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -4264,6 +4293,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -4742,6 +4777,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 3.6
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 3.9
         }
       }
     },
@@ -5219,6 +5258,10 @@
         },
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
+          "value": 0
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
           "value": 0
         }
       }
@@ -5698,6 +5741,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 49.24
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 49.23
         }
       }
     },
@@ -6175,6 +6222,10 @@
         },
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
+          "value": 0.0
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
           "value": 0.0
         }
       }
@@ -6654,6 +6705,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 30.0
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 30.0
         }
       }
     },
@@ -7132,6 +7187,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 34.7
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 34.6
         }
       }
     },
@@ -7849,6 +7908,11 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "error": true,
+          "error_type": "TimeoutError"
         }
       }
     },
@@ -8566,6 +8630,11 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "error": true,
+          "error_type": "TimeoutError"
         }
       }
     },
@@ -9282,6 +9351,12 @@
           "iso_time": "2026-08-20T19:30:00",
           "error": true,
           "error_type": "TimeoutError"
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
         }
       }
     },
@@ -9760,6 +9835,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 716.5
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 846.0
         }
       }
     },
@@ -10238,6 +10317,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 31.9
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 51.6
         }
       }
     },
@@ -10716,6 +10799,10 @@
         "1787247000": {
           "iso_time": "2026-08-20T19:30:00",
           "value": 11.7
+        },
+        "1787247600": {
+          "iso_time": "2026-08-20T19:40:00",
+          "value": 11.5
         }
       }
     }
