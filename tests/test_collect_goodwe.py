@@ -5,6 +5,7 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest import mock
 
@@ -16,6 +17,7 @@ from collect import (  # noqa: E402
     build_victron_latest_device,
     get_nearest_vrm_point,
     get_recoverable_vrm_points,
+    get_goodwe_daily_fallback_wh,
     get_goodwe_reading,
     get_vrm_recovery_status,
     interval_needs_recovery,
@@ -218,6 +220,58 @@ class TestGoodweSystemExitHandling(unittest.TestCase):
         self.assertTrue(interval["error"])
         self.assertEqual(interval["error_type"], "SystemExit")
         self.assertIn("No inverter data", interval["error_message"])
+
+
+class TestGoodweDailyFallback(unittest.TestCase):
+    def test_reads_daily_kwh_and_converts_to_wh(self):
+        calls = {}
+
+        class FakeGoodwe:
+            def call(self, url, payload):
+                calls["url"] = url
+                calls["payload"] = payload
+                return [{"d": "09/23/2026", "p": 20.0, "i": 2.2}]
+
+        daily_wh = get_goodwe_daily_fallback_wh(
+            FakeGoodwe(),
+            {"station_id": "station-1"},
+            target_date=date(2026, 9, 23),
+        )
+
+        self.assertEqual(daily_wh, 20000.0)
+        self.assertEqual(calls["payload"]["date"], "2026-09-23")
+        self.assertEqual(calls["payload"]["powerstation_id"], "station-1")
+
+    def test_returns_none_without_daily_values(self):
+        class FakeGoodwe:
+            def call(self, url, payload):
+                return []
+
+        self.assertIsNone(
+            get_goodwe_daily_fallback_wh(FakeGoodwe(), {"station_id": "station-1"})
+        )
+
+    def test_collect_uses_daily_fallback_when_realtime_is_empty(self):
+        import collect
+
+        def empty_realtime(_device_config):
+            return {"_fallback_daily_wh": 20000.0}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            filepath = os.path.join(tmp, "goodwe1-2026-09-23.json")
+            with mock.patch.object(collect, "get_filepath", return_value=filepath), mock.patch.object(
+                collect, "collect_goodwe_sems_snapshot", side_effect=empty_realtime
+            ):
+                asyncio.run(collect.collect_goodwe_sems("goodwe1", {}, "1790127000"))
+
+            with open(filepath) as handle:
+                data = json.load(handle)
+
+        self.assertEqual(data["totals"], {"p1": 20000.0, "p2": 0})
+        interval = data["intervals"]["1790127000"]
+        self.assertTrue(interval["error"])
+        self.assertEqual(interval["error_type"], "ValueError")
+        self.assertIn("daily total fallback", interval["error_message"])
 
 
 if __name__ == "__main__":

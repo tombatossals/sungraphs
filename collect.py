@@ -881,6 +881,37 @@ def get_goodwe_reading(sems_data):
     }
 
 
+GOODWE_REALTIME_ENDPOINT = "v2/PowerStation/GetMonitorDetailByPowerstationId"
+GOODWE_DAILY_ENDPOINT = "v2/PowerStationMonitor/GetPowerStationPowerAndIncomeByDay"
+
+
+def get_goodwe_daily_fallback_wh(goodwe, device_config, target_date=None):
+    """Producción diaria (kWh -> Wh) del endpoint diario de SEMS.
+
+    Respaldo para cuando el endpoint de tiempo real devuelve data vacía: el
+    total diario sí se puede consultar aunque no haya datos por intervalo.
+    """
+    day = get_local_date(target_date).strftime("%Y-%m-%d")
+    rows = goodwe.call(
+        GOODWE_DAILY_ENDPOINT,
+        {
+            "powerstation_id": device_config["station_id"],
+            "count": 1,
+            "date": day,
+        },
+    )
+    if not isinstance(rows, list):
+        return None
+
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        daily_kwh = first_number(row.get("p"))
+        if daily_kwh is not None:
+            return daily_kwh * 1000
+    return None
+
+
 def collect_goodwe_sems_snapshot(device_config):
     from pygoodwe import API
 
@@ -890,11 +921,21 @@ def collect_goodwe_sems_snapshot(device_config):
         password=device_config["password"],
         skipload=True,
     )
-    # Fallar rápido: pygoodwe reintenta 5 veces con 30s de espera y, si el API
-    # de SEMS no devuelve inversores, termina con sys.exit(). Eso no debe
-    # bloquear durante minutos al resto de colectores.
-    goodwe.getCurrentReadings(maxretries=1)
-    return goodwe.data
+    goodwe.do_login()
+
+    realtime = goodwe.call(
+        GOODWE_REALTIME_ENDPOINT,
+        {"powerStationId": device_config["station_id"]},
+    )
+    if not isinstance(realtime, dict):
+        realtime = {}
+
+    if not get_first_goodwe_inverter(realtime):
+        # Desde 2026-09-23 SEMS+ devuelve data vacía en el endpoint de tiempo
+        # real. Rescatamos al menos el total diario del endpoint diario.
+        realtime["_fallback_daily_wh"] = get_goodwe_daily_fallback_wh(goodwe, device_config)
+
+    return realtime
 
 
 async def collect_goodwe_sems(name, device_config, slot):
@@ -909,7 +950,15 @@ async def collect_goodwe_sems(name, device_config, slot):
         reading = get_goodwe_reading(sems_data)
 
         if reading["pac"] is None and reading["daily_wh"] is None:
-            raise ValueError("No SEMS production values found")
+            fallback_wh = sems_data.get("_fallback_daily_wh")
+            if fallback_wh is None:
+                raise ValueError("No SEMS production values found")
+            p1_daily, p2_daily = split_goodwe_daily_wh(fallback_wh, 0, 0)
+            data["totals"] = {
+                "p1": round_value(p1_daily),
+                "p2": round_value(p2_daily),
+            }
+            raise ValueError("No SEMS realtime values; used daily total fallback")
 
         daily_wh = reading["daily_wh"] or 0
         total_w = round_value(reading["pac"] or 0)
