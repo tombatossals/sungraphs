@@ -888,8 +888,12 @@ def collect_goodwe_sems_snapshot(device_config):
         system_id=device_config["station_id"],
         account=device_config["account"],
         password=device_config["password"],
+        skipload=True,
     )
-    goodwe.getCurrentReadings()
+    # Fallar rápido: pygoodwe reintenta 5 veces con 30s de espera y, si el API
+    # de SEMS no devuelve inversores, termina con sys.exit(). Eso no debe
+    # bloquear durante minutos al resto de colectores.
+    goodwe.getCurrentReadings(maxretries=1)
     return goodwe.data
 
 
@@ -935,7 +939,9 @@ async def collect_goodwe_sems(name, device_config, slot):
         if reading["sems_time"]:
             interval["sems_time"] = reading["sems_time"]
 
-    except Exception as exc:
+    except (Exception, SystemExit) as exc:
+        # pygoodwe llama a sys.exit() cuando SEMS no devuelve datos de inversor
+        # (SystemExit no hereda de Exception), y eso abortaba toda la colecta.
         mark_error(data["intervals"][slot], exc)
 
     save_json(filepath, data)
@@ -1030,16 +1036,20 @@ async def main():
         name = device_config["id"]
         device_type = device_config["type"]
 
-        if device_type == "apsystems":
-            await collect_apsystems(name, device_config, slot)
-        elif device_type == "goodwe_sems":
-            await collect_goodwe_sems(name, device_config, slot)
-        elif device_type == "victron":
-            await collect_victron_device(name, device_config, slot)
-        elif device_type == "shelly_em":
-            await collect_shelly_em(name, device_config, slot)
-        else:
-            raise ValueError(f"Unsupported device type: {device_type}")
+        try:
+            if device_type == "apsystems":
+                await collect_apsystems(name, device_config, slot)
+            elif device_type == "goodwe_sems":
+                await collect_goodwe_sems(name, device_config, slot)
+            elif device_type == "victron":
+                await collect_victron_device(name, device_config, slot)
+            elif device_type == "shelly_em":
+                await collect_shelly_em(name, device_config, slot)
+            else:
+                raise ValueError(f"Unsupported device type: {device_type}")
+        except (Exception, SystemExit) as exc:
+            # Ningún dispositivo debe abortar la colecta completa.
+            print(f"Error collecting {name} ({device_type}): {exc}")
 
 
 if __name__ == "__main__":

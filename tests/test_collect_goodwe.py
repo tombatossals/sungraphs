@@ -1,7 +1,12 @@
 """Tests for GoodWe SEMS value extraction."""
 
+import asyncio
+import json
+import os
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import sys
 
@@ -190,6 +195,29 @@ class TestBuildVictronLatestDevice(unittest.TestCase):
         self.assertTrue(reading["error"])
         self.assertEqual(reading["error_type"], "KeyError")
         self.assertIn("Missing Victron sample bateria-temperatura", reading["error_message"])
+
+
+class TestGoodweSystemExitHandling(unittest.TestCase):
+    def test_marks_interval_error_when_pygoodwe_exits(self):
+        import collect
+
+        def boom(_device_config):
+            raise SystemExit("No inverter data after 1 retries, quitting.")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            filepath = os.path.join(tmp, "goodwe1-2026-09-23.json")
+            with mock.patch.object(collect, "get_filepath", return_value=filepath), mock.patch.object(
+                collect, "collect_goodwe_sems_snapshot", side_effect=boom
+            ):
+                asyncio.run(collect.collect_goodwe_sems("goodwe1", {}, "1790127000"))
+
+            with open(filepath) as handle:
+                data = json.load(handle)
+
+        interval = data["intervals"]["1790127000"]
+        self.assertTrue(interval["error"])
+        self.assertEqual(interval["error_type"], "SystemExit")
+        self.assertIn("No inverter data", interval["error_message"])
 
 
 if __name__ == "__main__":
