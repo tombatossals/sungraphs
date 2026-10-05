@@ -1,7 +1,7 @@
 {
   "date": "05/10/2026",
   "totals": {
-    "p1": 5000.0,
+    "p1": 5500.0,
     "p2": 0
   },
   "intervals": {
@@ -445,6 +445,12 @@
     },
     "1791195000": {
       "iso_time": "2026-10-05T12:10:00",
+      "error": true,
+      "error_type": "ValueError",
+      "error_message": "No SEMS realtime values; used daily total fallback"
+    },
+    "1791195600": {
+      "iso_time": "2026-10-05T12:20:00",
       "error": true,
       "error_type": "ValueError",
       "error_message": "No SEMS realtime values; used daily total fallback"
