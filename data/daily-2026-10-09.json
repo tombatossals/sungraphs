@@ -1,6 +1,6 @@
 {
   "date": "2026-10-09",
-  "generated_at": "2026-10-09T16:30:23.441138+00:00",
+  "generated_at": "2026-10-09T16:40:16.510134+00:00",
   "metadata": {
     "devices": [
       {
@@ -775,6 +775,12 @@
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS realtime values; used daily total fallback"
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS realtime values; used daily total fallback"
         }
       }
     },
@@ -1229,6 +1235,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 33
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 36
         }
       }
     },
@@ -1683,6 +1693,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 327.1
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 328.5
         }
       }
     },
@@ -2234,6 +2248,12 @@
         },
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -2915,6 +2935,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -3593,6 +3619,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -4047,6 +4079,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 173.1
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 135.5
         }
       }
     },
@@ -4501,6 +4537,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 135
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 175
         }
       }
     },
@@ -4955,6 +4995,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 52.17
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 51.62
         }
       }
     },
@@ -5409,6 +5453,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": -2.6
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": -3.4
         }
       }
     },
@@ -5862,6 +5910,10 @@
         },
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
+          "value": 100.0
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
           "value": 100.0
         }
       }
@@ -6317,14 +6369,18 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 27.5
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 27.4
         }
       }
     },
     "apsystems1": {
       "date": "09/10/2026",
       "totals": {
-        "p1": 1395.78,
-        "p2": 1432.2
+        "p1": 1397.3,
+        "p2": 1433.46
       },
       "intervals": {
         "1791496800": {
@@ -6998,14 +7054,20 @@
           "p1": 10.0,
           "p2": 8.0,
           "total_w": 18.0
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "p1": 8.0,
+          "p2": 6.0,
+          "total_w": 14.0
         }
       }
     },
     "apsystems2": {
       "date": "09/10/2026",
       "totals": {
-        "p1": 885.2,
-        "p2": 930.38
+        "p1": 886.88,
+        "p2": 931.59
       },
       "intervals": {
         "1791496800": {
@@ -7678,14 +7740,20 @@
           "p1": 15.0,
           "p2": 7.0,
           "total_w": 22.0
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "p1": 8.0,
+          "p2": 6.0,
+          "total_w": 14.0
         }
       }
     },
     "apsystems3": {
       "date": "09/10/2026",
       "totals": {
-        "p1": 1638.79,
-        "p2": 1542.34
+        "p1": 1640.65,
+        "p2": 1544.15
       },
       "intervals": {
         "1791496800": {
@@ -8359,6 +8427,12 @@
           "p1": 12.0,
           "p2": 12.0,
           "total_w": 24.0
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "p1": 9.0,
+          "p2": 9.0,
+          "total_w": 18.0
         }
       }
     },
@@ -8823,6 +8897,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 304.2
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 281.9
         }
       }
     },
@@ -9283,6 +9361,10 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Shelly sample secundarias'"
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 11.4
         }
       }
     },
@@ -9739,6 +9821,10 @@
         "1791563400": {
           "iso_time": "2026-10-09T18:30:00",
           "value": 15.3
+        },
+        "1791564000": {
+          "iso_time": "2026-10-09T18:40:00",
+          "value": 15.4
         }
       }
     }
