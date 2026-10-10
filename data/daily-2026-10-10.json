@@ -1,6 +1,6 @@
 {
   "date": "2026-10-10",
-  "generated_at": "2026-10-10T05:50:16.327246+00:00",
+  "generated_at": "2026-10-10T06:00:18.157030+00:00",
   "metadata": {
     "devices": [
       {
@@ -391,6 +391,12 @@
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS realtime values; used daily total fallback"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS realtime values; used daily total fallback"
         }
       }
     },
@@ -591,6 +597,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -791,6 +803,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -1085,6 +1103,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -1379,6 +1403,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -1673,6 +1703,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -1873,6 +1909,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2073,6 +2115,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2273,6 +2321,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2473,6 +2527,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2673,6 +2733,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2873,12 +2939,21 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "timed out"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
     "apsystems1": {
       "date": "10/10/2026",
-      "totals": {},
+      "totals": {
+        "p1": 0.05,
+        "p2": 0.0
+      },
       "intervals": {
         "1791583200": {
           "iso_time": "2026-10-10T00:00:00",
@@ -3167,6 +3242,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
         }
       }
     },
@@ -3461,12 +3542,20 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "error": true,
+          "error_type": "TimeoutError"
         }
       }
     },
     "apsystems3": {
       "date": "10/10/2026",
-      "totals": {},
+      "totals": {
+        "p1": 0.04,
+        "p2": 0.01
+      },
       "intervals": {
         "1791583200": {
           "iso_time": "2026-10-10T00:00:00",
@@ -3755,6 +3844,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
         }
       }
     },
@@ -3959,6 +4054,10 @@
         "1791611400": {
           "iso_time": "2026-10-10T07:50:00",
           "value": 312.3
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "value": 307.0
         }
       }
     },
@@ -4157,6 +4256,10 @@
         "1791611400": {
           "iso_time": "2026-10-10T07:50:00",
           "value": 19.9
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "value": 19.8
         }
       }
     },
@@ -4355,6 +4458,10 @@
         "1791611400": {
           "iso_time": "2026-10-10T07:50:00",
           "value": 14.3
+        },
+        "1791612000": {
+          "iso_time": "2026-10-10T08:00:00",
+          "value": 13.8
         }
       }
     }
