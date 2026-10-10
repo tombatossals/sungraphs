@@ -1,6 +1,6 @@
 {
   "date": "2026-10-10",
-  "generated_at": "2026-10-10T01:30:25.857581+00:00",
+  "generated_at": "2026-10-10T01:40:18.811828+00:00",
   "metadata": {
     "devices": [
       {
@@ -235,6 +235,12 @@
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS realtime values; used daily total fallback"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS realtime values; used daily total fallback"
         }
       }
     },
@@ -329,6 +335,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 34
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 28
         }
       }
     },
@@ -423,6 +433,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 334.2
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 352.1
         }
       }
     },
@@ -558,6 +572,12 @@
         },
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -699,6 +719,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -837,6 +863,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -931,6 +963,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 2.2
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 2.1
         }
       }
     },
@@ -1025,6 +1061,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 342
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 367
         }
       }
     },
@@ -1118,6 +1158,10 @@
         },
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
+          "value": 49.7
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
           "value": 49.7
         }
       }
@@ -1213,6 +1257,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": -6.9
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": -7.4
         }
       }
     },
@@ -1307,6 +1355,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 77.0
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 77.0
         }
       }
     },
@@ -1400,6 +1452,10 @@
         },
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
+          "value": 23.0
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
           "value": 23.0
         }
       }
@@ -1536,6 +1592,12 @@
         },
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
@@ -1677,6 +1739,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
         }
       }
     },
@@ -1815,6 +1883,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "error": true,
+          "error_type": "ClientConnectorError",
+          "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
         }
       }
     },
@@ -1911,6 +1985,10 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Shelly sample criticas'"
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 299.2
         }
       }
     },
@@ -2005,6 +2083,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 23.0
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 22.9
         }
       }
     },
@@ -2099,6 +2181,10 @@
         "1791595800": {
           "iso_time": "2026-10-10T03:30:00",
           "value": 19.4
+        },
+        "1791596400": {
+          "iso_time": "2026-10-10T03:40:00",
+          "value": 19.9
         }
       }
     }
