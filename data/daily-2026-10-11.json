@@ -1,6 +1,6 @@
 {
   "date": "2026-10-11",
-  "generated_at": "2026-10-11T12:10:07.549007+00:00",
+  "generated_at": "2026-10-11T12:20:07.542507+00:00",
   "metadata": {
     "devices": [
       {
@@ -100,7 +100,7 @@
     "goodwe1": {
       "date": "11/10/2026",
       "totals": {
-        "p1": 9200.0,
+        "p1": 9400.0,
         "p2": 0
       },
       "intervals": {
@@ -616,6 +616,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS realtime values; used daily total fallback"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS realtime values; used daily total fallback"
@@ -1141,6 +1147,12 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -1660,6 +1672,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
@@ -2185,6 +2203,12 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -2704,6 +2728,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
@@ -3229,6 +3259,12 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -3748,6 +3784,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
@@ -4273,6 +4315,12 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -4792,6 +4840,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
@@ -5317,6 +5371,12 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
@@ -5836,6 +5896,12 @@
         },
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
@@ -6361,14 +6427,20 @@
           "error": true,
           "error_type": "OSError",
           "error_message": "[Errno 113] No route to host"
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "error": true,
+          "error_type": "OSError",
+          "error_message": "[Errno 113] No route to host"
         }
       }
     },
     "apsystems1": {
       "date": "11/10/2026",
       "totals": {
-        "p1": 711.07,
-        "p2": 713.98
+        "p1": 727.82,
+        "p2": 730.76
       },
       "intervals": {
         "1791669600": {
@@ -6886,14 +6958,20 @@
           "p1": 110.0,
           "p2": 110.0,
           "total_w": 220.0
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "p1": 111.0,
+          "p2": 111.0,
+          "total_w": 222.0
         }
       }
     },
     "apsystems2": {
       "date": "11/10/2026",
       "totals": {
-        "p1": 405.71,
-        "p2": 475.56
+        "p1": 420.51,
+        "p2": 491.36
       },
       "intervals": {
         "1791669600": {
@@ -7411,14 +7489,20 @@
           "p1": 96.0,
           "p2": 102.0,
           "total_w": 198.0
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "p1": 97.0,
+          "p2": 104.0,
+          "total_w": 201.0
         }
       }
     },
     "apsystems3": {
       "date": "11/10/2026",
       "totals": {
-        "p1": 768.27,
-        "p2": 683.49
+        "p1": 785.95,
+        "p2": 701.36
       },
       "intervals": {
         "1791669600": {
@@ -7935,6 +8019,12 @@
           "p1": 116.0,
           "p2": 118.0,
           "total_w": 234.0
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "p1": 118.0,
+          "p2": 120.0,
+          "total_w": 238.0
         }
       }
     },
@@ -8285,6 +8375,10 @@
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
           "value": 296.9
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "value": 303.8
         }
       }
     },
@@ -8635,6 +8729,10 @@
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
           "value": -176.5
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "value": -179.4
         }
       }
     },
@@ -8985,6 +9083,10 @@
         "1791720600": {
           "iso_time": "2026-10-11T14:10:00",
           "value": 16.1
+        },
+        "1791721200": {
+          "iso_time": "2026-10-11T14:20:00",
+          "value": 15.8
         }
       }
     }
