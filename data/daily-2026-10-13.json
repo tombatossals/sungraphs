@@ -1,6 +1,6 @@
 {
   "date": "2026-10-13",
-  "generated_at": "2026-10-13T17:10:23.076027+00:00",
+  "generated_at": "2026-10-13T17:20:14.358101+00:00",
   "metadata": {
     "devices": [
       {
@@ -799,6 +799,12 @@
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS realtime values; used daily total fallback"
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS realtime values; used daily total fallback"
         }
       }
     },
@@ -1269,6 +1275,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 4
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 12
         }
       }
     },
@@ -1739,6 +1749,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 2877.9
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 786.8
         }
       }
     },
@@ -2438,6 +2452,12 @@
         },
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -3143,6 +3163,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -3845,6 +3871,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -4315,6 +4347,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 23.9
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": -11.2
         }
       }
     },
@@ -4785,6 +4821,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 3069
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 846
         }
       }
     },
@@ -5255,6 +5295,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 49.51
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 49.77
         }
       }
     },
@@ -5725,6 +5769,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": -62.0
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": -17.0
         }
       }
     },
@@ -6195,6 +6243,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 96.0
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 94.0
         }
       }
     },
@@ -6665,14 +6717,18 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 30.1
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 30.1
         }
       }
     },
     "apsystems1": {
       "date": "13/10/2026",
       "totals": {
-        "p1": 1162.3,
-        "p2": 1174.81
+        "p1": 0.0,
+        "p2": 0.0
       },
       "intervals": {
         "1791842400": {
@@ -7370,14 +7426,20 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
         }
       }
     },
     "apsystems2": {
       "date": "13/10/2026",
       "totals": {
-        "p1": 822.06,
-        "p2": 882.87
+        "p1": 822.07,
+        "p2": 882.89
       },
       "intervals": {
         "1791842400": {
@@ -8075,14 +8137,20 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
         }
       }
     },
     "apsystems3": {
       "date": "13/10/2026",
       "totals": {
-        "p1": 1316.07,
-        "p2": 1238.4
+        "p1": 1316.12,
+        "p2": 1238.45
       },
       "intervals": {
         "1791842400": {
@@ -8780,6 +8848,12 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "p1": 0.0,
+          "p2": 0.0,
+          "total_w": 0.0
         }
       }
     },
@@ -9250,6 +9324,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 695.5
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 673.3
         }
       }
     },
@@ -9720,6 +9798,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 2056.3
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 50.4
         }
       }
     },
@@ -10190,6 +10272,10 @@
         "1791911400": {
           "iso_time": "2026-10-13T19:10:00",
           "value": 37.9
+        },
+        "1791912000": {
+          "iso_time": "2026-10-13T19:20:00",
+          "value": 36.1
         }
       }
     }
