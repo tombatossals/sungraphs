@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "generated_at": "2026-11-01T06:50:12.437641+00:00",
+  "generated_at": "2026-11-01T07:00:08.977961+00:00",
   "metadata": {
     "devices": [
       {
@@ -388,6 +388,12 @@
           "error": true,
           "error_type": "ValueError",
           "error_message": "No SEMS production values found"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "error": true,
+          "error_type": "ValueError",
+          "error_message": "No SEMS production values found"
         }
       }
     },
@@ -586,6 +592,10 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 298
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 292
         }
       }
     },
@@ -784,6 +794,10 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 285.1
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 375.6
         }
       }
     },
@@ -1075,6 +1089,12 @@
         },
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -1372,6 +1392,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -1666,6 +1692,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -1864,6 +1896,10 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 2.1
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 97.6
         }
       }
     },
@@ -2061,6 +2097,10 @@
         },
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
+          "value": 0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
           "value": 0
         }
       }
@@ -2260,6 +2300,10 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 49.15
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 49.15
         }
       }
     },
@@ -2457,6 +2501,10 @@
         },
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
+          "value": 0.0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
           "value": 0.0
         }
       }
@@ -2656,6 +2704,10 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 30.0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 30.0
         }
       }
     },
@@ -2854,14 +2906,18 @@
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
           "value": 20.5
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "value": 20.4
         }
       }
     },
     "apsystems1": {
       "date": "01/11/2026",
       "totals": {
-        "p1": 0.32,
-        "p2": 0.13
+        "p1": 1.21,
+        "p2": 0.88
       },
       "intervals": {
         "1793487600": {
@@ -3151,14 +3207,20 @@
           "p1": 4.0,
           "p2": 3.0,
           "total_w": 7.0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "p1": 6.0,
+          "p2": 5.0,
+          "total_w": 11.0
         }
       }
     },
     "apsystems2": {
       "date": "01/11/2026",
       "totals": {
-        "p1": 0.02,
-        "p2": 0.05
+        "p1": 0.5,
+        "p2": 0.51
       },
       "intervals": {
         "1793487600": {
@@ -3447,14 +3509,20 @@
           "p1": 0.0,
           "p2": 0.0,
           "total_w": 0.0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "p1": 4.0,
+          "p2": 4.0,
+          "total_w": 8.0
         }
       }
     },
     "apsystems3": {
       "date": "01/11/2026",
       "totals": {
-        "p1": 0.11,
-        "p2": 0.11
+        "p1": 0.88,
+        "p2": 0.8
       },
       "intervals": {
         "1793487600": {
@@ -3744,6 +3812,12 @@
           "p1": 3.0,
           "p2": 2.0,
           "total_w": 5.0
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "p1": 5.0,
+          "p2": 5.0,
+          "total_w": 10.0
         }
       }
     },
@@ -4035,6 +4109,12 @@
         },
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
+          "error": true,
+          "error_type": "TimeoutError",
+          "error_message": "No response from Shelly EM"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
@@ -4332,6 +4412,12 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
+          "error": true,
+          "error_type": "TimeoutError",
+          "error_message": "No response from Shelly EM"
         }
       }
     },
@@ -4623,6 +4709,12 @@
         },
         "1793515800": {
           "iso_time": "2026-11-01T07:50:00",
+          "error": true,
+          "error_type": "TimeoutError",
+          "error_message": "No response from Shelly EM"
+        },
+        "1793516400": {
+          "iso_time": "2026-11-01T08:00:00",
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
