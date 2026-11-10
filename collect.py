@@ -881,61 +881,50 @@ def get_goodwe_reading(sems_data):
     }
 
 
-GOODWE_REALTIME_ENDPOINT = "v2/PowerStation/GetMonitorDetailByPowerstationId"
-GOODWE_DAILY_ENDPOINT = "v2/PowerStationMonitor/GetPowerStationPowerAndIncomeByDay"
+def get_sems_plus_client(device_config):
+    from sems_plus import SemsPlusClient
 
-
-def get_goodwe_daily_fallback_wh(goodwe, device_config, target_date=None):
-    """Producción diaria (kWh -> Wh) del endpoint diario de SEMS.
-
-    Respaldo para cuando el endpoint de tiempo real devuelve data vacía: el
-    total diario sí se puede consultar aunque no haya datos por intervalo.
-    """
-    day = get_local_date(target_date).strftime("%Y-%m-%d")
-    rows = goodwe.call(
-        GOODWE_DAILY_ENDPOINT,
-        {
-            "powerstation_id": device_config["station_id"],
-            "count": 1,
-            "date": day,
-        },
+    return SemsPlusClient(
+        station_id=device_config["station_id"],
+        account=device_config["account"],
+        password=device_config["password"],
     )
-    if not isinstance(rows, list):
-        return None
-
-    for row in rows:
-        if not isinstance(row, dict):
-            continue
-        daily_kwh = first_number(row.get("p"))
-        if daily_kwh is not None:
-            return daily_kwh * 1000
-    return None
 
 
 def collect_goodwe_sems_snapshot(device_config):
-    from pygoodwe import API
+    # Desde 2026-09-23 la API antigua de SEMS (pygoodwe) devuelve data vacía
+    # para las plantas migradas a SEMS+; leemos de la API web de SEMS+.
+    from sems_plus import build_snapshot
 
-    goodwe = API(
-        system_id=device_config["station_id"],
-        account=device_config["account"],
-        password=device_config["password"],
-        skipload=True,
+    return build_snapshot(get_sems_plus_client(device_config))
+
+
+def recover_goodwe_daily_totals(name, device_config, start_date, end_date):
+    """Rellena totals de los ficheros diarios con el total diario de SEMS+.
+
+    SEMS+ solo nos da el total del día, no la curva: los intervalos no se tocan.
+    """
+    from sems_plus import get_daily_totals_wh
+
+    totals = get_daily_totals_wh(
+        get_sems_plus_client(device_config), start_date, end_date
     )
-    goodwe.do_login()
-
-    realtime = goodwe.call(
-        GOODWE_REALTIME_ENDPOINT,
-        {"powerStationId": device_config["station_id"]},
-    )
-    if not isinstance(realtime, dict):
-        realtime = {}
-
-    if not get_first_goodwe_inverter(realtime):
-        # Desde 2026-09-23 SEMS+ devuelve data vacía en el endpoint de tiempo
-        # real. Rescatamos al menos el total diario del endpoint diario.
-        realtime["_fallback_daily_wh"] = get_goodwe_daily_fallback_wh(goodwe, device_config)
-
-    return realtime
+    recovered = []
+    for day_text in sorted(totals):
+        day = parse_target_date(day_text)
+        if not start_date <= day <= end_date:
+            continue
+        filepath = get_filepath(name, day)
+        data = load_or_create_json(filepath, day)
+        new_totals = {"p1": round_value(totals[day_text]), "p2": 0}
+        current = data.get("totals") or {}
+        has_mppt_split = bool(current.get("p2"))
+        if has_mppt_split or current == new_totals:
+            continue
+        data["totals"] = new_totals
+        save_json(filepath, data)
+        recovered.append(day_text)
+    return recovered
 
 
 async def collect_goodwe_sems(name, device_config, slot):
@@ -989,8 +978,8 @@ async def collect_goodwe_sems(name, device_config, slot):
             interval["sems_time"] = reading["sems_time"]
 
     except (Exception, SystemExit) as exc:
-        # pygoodwe llama a sys.exit() cuando SEMS no devuelve datos de inversor
-        # (SystemExit no hereda de Exception), y eso abortaba toda la colecta.
+        # SystemExit no hereda de Exception: un sys.exit() de una librería
+        # (pasaba con pygoodwe) abortaba toda la colecta.
         mark_error(data["intervals"][slot], exc)
 
     save_json(filepath, data)
@@ -1003,6 +992,12 @@ def parse_args():
         nargs="?",
         const=datetime.now().strftime("%Y-%m-%d"),
         help="Recupera huecos Victron de una fecha YYYY-MM-DD usando VRM y sale.",
+    )
+    parser.add_argument(
+        "--recover-goodwe-days",
+        nargs="+",
+        metavar="YYYY-MM-DD",
+        help="Rellena totales diarios GoodWe desde SEMS+ para una fecha o un rango (inicio fin) y sale.",
     )
     parser.add_argument(
         "--list-vrm-attributes",
@@ -1074,6 +1069,20 @@ async def main():
 
     if args.recover_victron_day:
         await recover_victron_devices_for_day(parse_target_date(args.recover_victron_day))
+        return
+
+    if args.recover_goodwe_days:
+        if len(args.recover_goodwe_days) > 2:
+            raise SystemExit("--recover-goodwe-days admite una fecha o un rango (inicio fin).")
+        start_date = parse_target_date(args.recover_goodwe_days[0])
+        end_date = parse_target_date(args.recover_goodwe_days[-1])
+        for device_config in config["devices"]:
+            if device_config["type"] != "goodwe_sems":
+                continue
+            recovered = recover_goodwe_daily_totals(
+                device_config["id"], device_config, start_date, end_date
+            )
+            print(f"Recovered {len(recovered)} GoodWe daily totals from SEMS+ for {device_config['id']}")
         return
 
     os.makedirs(DATA_DIR, exist_ok=True)

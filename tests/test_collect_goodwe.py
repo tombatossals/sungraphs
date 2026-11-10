@@ -17,7 +17,6 @@ from collect import (  # noqa: E402
     build_victron_latest_device,
     get_nearest_vrm_point,
     get_recoverable_vrm_points,
-    get_goodwe_daily_fallback_wh,
     get_goodwe_reading,
     get_vrm_recovery_status,
     interval_needs_recovery,
@@ -223,34 +222,6 @@ class TestGoodweSystemExitHandling(unittest.TestCase):
 
 
 class TestGoodweDailyFallback(unittest.TestCase):
-    def test_reads_daily_kwh_and_converts_to_wh(self):
-        calls = {}
-
-        class FakeGoodwe:
-            def call(self, url, payload):
-                calls["url"] = url
-                calls["payload"] = payload
-                return [{"d": "09/23/2026", "p": 20.0, "i": 2.2}]
-
-        daily_wh = get_goodwe_daily_fallback_wh(
-            FakeGoodwe(),
-            {"station_id": "station-1"},
-            target_date=date(2026, 9, 23),
-        )
-
-        self.assertEqual(daily_wh, 20000.0)
-        self.assertEqual(calls["payload"]["date"], "2026-09-23")
-        self.assertEqual(calls["payload"]["powerstation_id"], "station-1")
-
-    def test_returns_none_without_daily_values(self):
-        class FakeGoodwe:
-            def call(self, url, payload):
-                return []
-
-        self.assertIsNone(
-            get_goodwe_daily_fallback_wh(FakeGoodwe(), {"station_id": "station-1"})
-        )
-
     def test_collect_uses_daily_fallback_when_realtime_is_empty(self):
         import collect
 
@@ -272,6 +243,62 @@ class TestGoodweDailyFallback(unittest.TestCase):
         self.assertTrue(interval["error"])
         self.assertEqual(interval["error_type"], "ValueError")
         self.assertIn("daily total fallback", interval["error_message"])
+
+
+class TestRecoverGoodweDailyTotals(unittest.TestCase):
+    def run_recovery(self, tmp, totals_wh):
+        import collect
+        import sems_plus
+
+        def filepath(name, target_date=None):
+            return os.path.join(tmp, f"{name}-{target_date:%Y-%m-%d}.json")
+
+        with mock.patch.object(collect, "get_filepath", side_effect=filepath), mock.patch.object(
+            collect, "get_sems_plus_client", return_value=object()
+        ), mock.patch.object(sems_plus, "get_daily_totals_wh", return_value=totals_wh):
+            return collect.recover_goodwe_daily_totals(
+                "goodwe1", {}, date(2026, 10, 22), date(2026, 10, 23)
+            )
+
+    def test_fills_totals_and_keeps_intervals(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            existing = os.path.join(tmp, "goodwe1-2026-10-22.json")
+            with open(existing, "w") as handle:
+                json.dump(
+                    {"date": "22/10/2026", "totals": {}, "intervals": {"1": {"error": True}}},
+                    handle,
+                )
+
+            recovered = self.run_recovery(
+                tmp, {"2026-10-22": 12600.0, "2026-10-23": 17000.0, "2026-10-24": 1.0}
+            )
+
+            with open(existing) as handle:
+                day22 = json.load(handle)
+            with open(os.path.join(tmp, "goodwe1-2026-10-23.json")) as handle:
+                day23 = json.load(handle)
+            outside_range = os.path.exists(os.path.join(tmp, "goodwe1-2026-10-24.json"))
+
+        self.assertEqual(recovered, ["2026-10-22", "2026-10-23"])
+        self.assertEqual(day22["totals"], {"p1": 12600.0, "p2": 0})
+        self.assertEqual(day22["intervals"], {"1": {"error": True}})
+        self.assertEqual(day23["totals"], {"p1": 17000.0, "p2": 0})
+        self.assertEqual(day23["date"], "23/10/2026")
+        self.assertFalse(outside_range)
+
+    def test_does_not_overwrite_real_mppt_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            existing = os.path.join(tmp, "goodwe1-2026-10-22.json")
+            with open(existing, "w") as handle:
+                json.dump({"totals": {"p1": 5000.0, "p2": 7000.0}, "intervals": {}}, handle)
+
+            recovered = self.run_recovery(tmp, {"2026-10-22": 12600.0})
+
+            with open(existing) as handle:
+                data = json.load(handle)
+
+        self.assertEqual(recovered, [])
+        self.assertEqual(data["totals"], {"p1": 5000.0, "p2": 7000.0})
 
 
 if __name__ == "__main__":
