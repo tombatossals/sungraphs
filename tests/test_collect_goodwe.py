@@ -301,5 +301,95 @@ class TestRecoverGoodweDailyTotals(unittest.TestCase):
         self.assertEqual(data["totals"], {"p1": 5000.0, "p2": 7000.0})
 
 
+class TestApplyGoodweDayCurve(unittest.TestCase):
+    def setUp(self):
+        import collect
+
+        self.collect = collect
+        self.day = date(2026, 9, 24)
+        self.start = collect.get_day_start_slot(self.day)
+
+    def slot_at(self, hour, minute):
+        return str(self.start + hour * 3600 + minute * 60)
+
+    def test_replaces_errors_and_keeps_good_readings(self):
+        good = {"iso_time": "x", "p1": 1.0, "p2": 2.0, "total_w": 3.0}
+        data = {
+            "intervals": {
+                self.slot_at(14, 0): {"iso_time": "x", "error": True},
+                self.slot_at(14, 10): dict(good),
+            }
+        }
+        curve = {
+            "14:00": {"total_w": 3036.0, "p1": 1441.65, "p2": 1623.52, "temperature": 45.0},
+            "14:10": {"total_w": 9999.0},
+        }
+
+        recovered = self.collect.apply_goodwe_day_curve(data, curve, self.day)
+
+        self.assertEqual(recovered, 143)
+        self.assertEqual(len(data["intervals"]), 144)
+        self.assertEqual(data["intervals"][self.slot_at(14, 10)], good)
+        fixed = data["intervals"][self.slot_at(14, 0)]
+        self.assertEqual(fixed["total_w"], 3036.0)
+        self.assertEqual(fixed["p1"], 1441.65)
+        self.assertEqual(fixed["p2"], 1623.52)
+        self.assertEqual(fixed["temperature"], 45.0)
+        self.assertEqual(fixed["recovered_from"], "sems_plus")
+        self.assertEqual(fixed["iso_time"], "2026-09-24T14:00:00")
+        self.assertNotIn("error", fixed)
+
+    def test_hours_without_curve_point_are_zero(self):
+        data = {"intervals": {}}
+        self.collect.apply_goodwe_day_curve(data, {"14:00": {"total_w": 5.0}}, self.day)
+        night = data["intervals"][self.slot_at(3, 0)]
+        self.assertEqual((night["p1"], night["p2"], night["total_w"]), (0, 0, 0))
+        self.assertNotIn("temperature", night)
+
+    def test_daytime_gap_between_points_is_not_zero_filled(self):
+        gap = self.slot_at(14, 0)
+        data = {"intervals": {gap: {"iso_time": "x", "error": True}}}
+        curve = {"09:00": {"total_w": 500.0}, "19:00": {"total_w": 200.0}}
+
+        self.collect.apply_goodwe_day_curve(data, curve, self.day)
+
+        self.assertEqual(data["intervals"][gap], {"iso_time": "x", "error": True})
+        self.assertNotIn(self.slot_at(15, 0), data["intervals"])
+        self.assertEqual(data["intervals"][self.slot_at(9, 0)]["total_w"], 500.0)
+        self.assertEqual(data["intervals"][self.slot_at(21, 0)]["total_w"], 0)
+
+    def test_stray_zero_point_at_night_does_not_open_a_gap(self):
+        data = {"intervals": {self.slot_at(4, 0): {"iso_time": "x", "error": True}}}
+        curve = {"02:10": {"total_w": 0.0}, "09:00": {"total_w": 500.0}}
+
+        self.collect.apply_goodwe_day_curve(data, curve, self.day)
+
+        night = data["intervals"][self.slot_at(4, 0)]
+        self.assertNotIn("error", night)
+        self.assertEqual(night["total_w"], 0)
+
+    def test_missing_ac_power_falls_back_to_mppt_sum(self):
+        data = {"intervals": {}}
+        curve = {"14:00": {"p1": 1387.41, "p2": 1537.15, "temperature": 49.7}}
+
+        self.collect.apply_goodwe_day_curve(data, curve, self.day)
+
+        fixed = data["intervals"][self.slot_at(14, 0)]
+        self.assertEqual(fixed["total_w"], 2924.56)
+        self.assertEqual((fixed["p1"], fixed["p2"]), (1387.41, 1537.15))
+
+    def test_empty_curve_leaves_data_untouched(self):
+        data = {"intervals": {self.slot_at(14, 0): {"error": True}}}
+        self.assertEqual(self.collect.apply_goodwe_day_curve(data, {}, self.day), 0)
+        self.assertEqual(data["intervals"], {self.slot_at(14, 0): {"error": True}})
+
+    def test_stops_at_last_slot(self):
+        data = {"intervals": {}}
+        self.collect.apply_goodwe_day_curve(
+            data, {"00:00": {"total_w": 0.0}}, self.day, last_slot=self.slot_at(1, 0)
+        )
+        self.assertEqual(len(data["intervals"]), 7)
+
+
 if __name__ == "__main__":
     unittest.main()

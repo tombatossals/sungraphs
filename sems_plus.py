@@ -21,6 +21,7 @@ LOGIN_HOST = "eu-semsplus.goodwe.com"
 LOGIN_PATH = "/web/sems/sems-user/api/v1/auth/cross-login"
 DEFAULT_API = "https://eu-gateway.semsportal.com/web/sems"
 PLANT_API = "/sems-plant/api"
+REPORT_API = "/sems-report/api"
 CLIENT_NAME = "semsPlusWeb"
 INVERTER_TYPES = ("INVERTER", "ENERGY_STORAGE_INTEGRATED_CABINET")
 SUCCESS_CODES = (0, "0", "00000")
@@ -227,6 +228,54 @@ def get_daily_totals_wh(client, start_date, end_date):
             if kwh is not None and point.get("date"):
                 totals[point["date"]] = kwh * 1000
     return totals
+
+
+CURVE_METRICS = [
+    {"metric": "pAc", "metricType": "real_time", "unit": "kW"},
+    {"metric": "mppt_power", "metricType": "real_time", "unit": "kW"},
+    {"metric": "interTemp", "metricType": "system", "unit": "°C"},
+]
+# item de la respuesta -> (campo de salida, factor de escala)
+CURVE_ITEMS = {
+    "pAc": ("total_w", 1000),
+    "Ppv1": ("p1", 1000),
+    "Ppv2": ("p2", 1000),
+    "interTemp": ("temperature", 1),
+}
+
+
+def get_inverter_day_curve(client, sn, day):
+    """Curva histórica de un día: {"HH:MM": {total_w, p1, p2, temperature}}.
+
+    SEMS+ devuelve un punto cada 5 minutos en hora local de la planta; solo se
+    incluyen las horas con algún valor (de noche no hay datos).
+    """
+    data = client.request(
+        "POST",
+        f"{REPORT_API}/compare/inverter/chart",
+        body={
+            "reportingPeriod": "day",
+            "dimension": "day",
+            "startTime": f"{day:%Y-%m-%d} 00:00:00",
+            "endTime": f"{day:%Y-%m-%d} 23:59:59",
+            "metrics": CURVE_METRICS,
+            "invertersReqs": [{"stationId": client.station_id, "inverterSns": [sn]}],
+        },
+    )
+    curve = {}
+    for device in data if isinstance(data, list) else []:
+        if device.get("sn") != sn:
+            continue
+        for series in device.get("dataList") or []:
+            target = CURVE_ITEMS.get(series.get("item"))
+            if target is None:
+                continue
+            field, scale = target
+            for point in series.get("dateValueRespList") or []:
+                value = to_number(point.get("val")) if isinstance(point, dict) else None
+                if value is not None and point.get("date"):
+                    curve.setdefault(point["date"], {})[field] = value * scale
+    return curve
 
 
 def kw_to_w(value):

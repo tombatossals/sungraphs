@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 import tomllib
-from datetime import datetime, time as datetime_time, timezone
+from datetime import datetime, time as datetime_time, timedelta, timezone
 from collections import defaultdict
 import time
 from urllib.parse import urlencode
@@ -927,6 +927,87 @@ def recover_goodwe_daily_totals(name, device_config, start_date, end_date):
     return recovered
 
 
+def apply_goodwe_day_curve(data, curve, target_date, last_slot=None):
+    """Sustituye los intervalos ausentes o con error por la curva de SEMS+.
+
+    `curve` es {"HH:MM": {total_w, p1, p2, temperature}} en hora local. Antes
+    del primer punto y después del último (de noche, inversor apagado) se pone
+    0. Un hueco entre puntos es el inversor sin subir datos: no se inventa un
+    0 y el intervalo se deja como estaba. Los intervalos que ya tenían una
+    lectura buena no se tocan.
+    """
+    if not curve:
+        return 0
+    # Las horas de sol van del primer al último punto con potencia: SEMS+
+    # devuelve a veces puntos sueltos a 0 de madrugada.
+    producing = [
+        hhmm
+        for hhmm, point in curve.items()
+        if max(point.get("total_w", 0), point.get("p1", 0), point.get("p2", 0)) > 0
+    ]
+    first_point = min(producing, default="24:00")
+    last_point = max(producing, default="00:00")
+
+    start = get_day_start_slot(target_date)
+    end = get_day_start_slot(target_date + timedelta(days=1))
+    if last_slot is not None:
+        end = min(end, int(last_slot) + 600)
+
+    intervals = data.setdefault("intervals", {})
+    recovered = 0
+    for slot in range(start, end, 600):
+        current = intervals.get(str(slot))
+        if current is not None and not current.get("error"):
+            continue
+        moment = datetime.fromtimestamp(slot)
+        hhmm = moment.strftime("%H:%M")
+        point = curve.get(hhmm)
+        if point is None:
+            if first_point < hhmm < last_point:
+                continue
+            point = {}
+        # A veces falta la potencia AC pero sí están las MPPT: usamos su suma.
+        total_w = point.get("total_w", point.get("p1", 0) + point.get("p2", 0))
+        interval = {
+            "iso_time": moment.isoformat(),
+            "p1": round_value(point.get("p1", total_w)),
+            "p2": round_value(point.get("p2", 0)),
+            "total_w": round_value(total_w),
+            "recovered_from": "sems_plus",
+        }
+        if "temperature" in point:
+            interval["temperature"] = round_value(point["temperature"])
+        intervals[str(slot)] = interval
+        recovered += 1
+    return recovered
+
+
+def recover_goodwe_day_curves(name, device_config, start_date, end_date):
+    """Recupera de SEMS+ la curva intradía de cada día del rango."""
+    from sems_plus import get_inverter_day_curve, list_inverters, SemsPlusError
+
+    client = get_sems_plus_client(device_config)
+    inverters = list_inverters(client)
+    if not inverters:
+        raise SemsPlusError("SEMS+ returned no inverters for this station")
+    sn = inverters[0]["sn"]
+
+    today = datetime.now().date()
+    recovered = {}
+    day = start_date
+    while day <= min(end_date, today):
+        curve = get_inverter_day_curve(client, sn, day)
+        filepath = get_filepath(name, day)
+        data = load_or_create_json(filepath, day)
+        last_slot = get_time_slot() if day == today else None
+        count = apply_goodwe_day_curve(data, curve, day, last_slot)
+        if count:
+            save_json(filepath, data)
+            recovered[day.strftime("%Y-%m-%d")] = count
+        day += timedelta(days=1)
+    return recovered
+
+
 async def collect_goodwe_sems(name, device_config, slot):
     filepath = get_filepath(name)
     data = load_or_create_json(filepath)
@@ -997,7 +1078,7 @@ def parse_args():
         "--recover-goodwe-days",
         nargs="+",
         metavar="YYYY-MM-DD",
-        help="Rellena totales diarios GoodWe desde SEMS+ para una fecha o un rango (inicio fin) y sale.",
+        help="Recupera de SEMS+ totales diarios y curvas GoodWe de una fecha o un rango (inicio fin) y sale.",
     )
     parser.add_argument(
         "--list-vrm-attributes",
@@ -1083,6 +1164,13 @@ async def main():
                 device_config["id"], device_config, start_date, end_date
             )
             print(f"Recovered {len(recovered)} GoodWe daily totals from SEMS+ for {device_config['id']}")
+            curves = recover_goodwe_day_curves(
+                device_config["id"], device_config, start_date, end_date
+            )
+            print(
+                f"Recovered {sum(curves.values())} GoodWe intervals in {len(curves)} days "
+                f"from SEMS+ for {device_config['id']}"
+            )
         return
 
     os.makedirs(DATA_DIR, exist_ok=True)

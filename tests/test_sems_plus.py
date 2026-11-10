@@ -186,5 +186,51 @@ class TestDailyTotals(unittest.TestCase):
         self.assertEqual(body["endTime"], "2026-11-10 23:59:59")
 
 
+class TestInverterDayCurve(unittest.TestCase):
+    def test_parses_five_minute_points_in_watts(self):
+        def series(item, points):
+            return {
+                "item": item,
+                "dateValueRespList": [{"date": d, "val": v} for d, v in points],
+            }
+
+        class CurveClient:
+            station_id = "station-1"
+
+            def request(self, method, path, params=None, body=None):
+                self.call = (method, path, body)
+                return [
+                    {"sn": "OTHER", "dataList": [series("pAc", [("14:10", 9.0)])]},
+                    {
+                        "sn": "SN123",
+                        "dataList": [
+                            series("pAc", [("00:00", None), ("14:10", 3.076), ("14:15", 3.067)]),
+                            series("Ppv1", [("14:10", 1.4949)]),
+                            series("Ppv2", [("14:10", 1.59943)]),
+                            series("interTemp", [("14:10", 50.3)]),
+                            series("unknown", [("14:10", 1)]),
+                        ],
+                    },
+                ]
+
+        client = CurveClient()
+        curve = sems_plus.get_inverter_day_curve(client, "SN123", date(2026, 9, 22))
+
+        self.assertEqual(sorted(curve), ["14:10", "14:15"])
+        self.assertAlmostEqual(curve["14:10"]["total_w"], 3076.0)
+        self.assertAlmostEqual(curve["14:10"]["p1"], 1494.9)
+        self.assertAlmostEqual(curve["14:10"]["p2"], 1599.43)
+        self.assertEqual(curve["14:10"]["temperature"], 50.3)
+        self.assertEqual(list(curve["14:15"]), ["total_w"])
+
+        method, path, body = client.call
+        self.assertEqual((method, path), ("POST", "/sems-report/api/compare/inverter/chart"))
+        self.assertEqual(body["startTime"], "2026-09-22 00:00:00")
+        self.assertEqual(body["endTime"], "2026-09-22 23:59:59")
+        self.assertEqual(
+            body["invertersReqs"], [{"stationId": "station-1", "inverterSns": ["SN123"]}]
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
