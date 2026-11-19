@@ -94,6 +94,8 @@ class FakeClient:
         if path.endswith("/telemetry"):
             return self.telemetry
         if path.endswith("/telecounting"):
+            if isinstance(self.telecounting, Exception):
+                raise self.telecounting
             return self.telecounting
         if path.endswith("/stations/flow"):
             return {"pAc": 0, "refreshTime": "2026-11-10T12:10:00"}
@@ -167,6 +169,16 @@ class TestBuildSnapshot(unittest.TestCase):
             FakeClient(telecounting=[]), target_date=date(2026, 11, 10)
         )
         self.assertEqual(get_goodwe_reading(snapshot)["daily_wh"], 10500.0)
+
+    def test_survives_telecounting_failure(self):
+        # Desde 2026-11-19 SEMS+ responde A0400 a /telecounting.
+        error = sems_plus.SemsPlusError("telecounting failed (code A0400)")
+        snapshot = sems_plus.build_snapshot(
+            FakeClient(telecounting=error), target_date=date(2026, 11, 10)
+        )
+        reading = get_goodwe_reading(snapshot)
+        self.assertIsNotNone(reading["pac"])
+        self.assertEqual(reading["daily_wh"], 10500.0)
 
     def test_raises_when_station_has_no_inverters(self):
         with self.assertRaises(sems_plus.SemsPlusError):
