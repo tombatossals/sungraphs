@@ -1,6 +1,6 @@
 {
   "date": "2026-11-24",
-  "generated_at": "2026-11-24T09:01:00.416275+00:00",
+  "generated_at": "2026-11-24T09:10:11.302662+00:00",
   "metadata": {
     "devices": [
       {
@@ -100,8 +100,8 @@
     "goodwe1": {
       "date": "24/11/2026",
       "totals": {
-        "p1": 350.93,
-        "p2": 649.07
+        "p1": 553.5,
+        "p2": 846.5
       },
       "intervals": {
         "1795474800": {
@@ -602,6 +602,15 @@
           "error": true,
           "error_type": "ConnectionError",
           "error_message": "HTTPSConnectionPool(host='eu-semsplus.goodwe.com', port=443): Max retries exceeded with url: /web/sems/sems-user/api/v1/auth/cross-login (Caused by NewConnectionError(\"HTTPSConnection(host='eu-semsplus.goodwe.com', port=443): Failed to establish a new connection: [Errno 113] No route to host\"))"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "p1": 261.0,
+          "p2": 399.16,
+          "total_w": 591.0,
+          "temperature": 27.6,
+          "status": 5,
+          "sems_time": "2026-11-24T10:08:00"
         }
       }
     },
@@ -852,6 +861,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 44
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 28
         }
       }
     },
@@ -1102,6 +1115,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 241.5
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 280.8
         }
       }
     },
@@ -1471,6 +1488,12 @@
         },
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l1'"
@@ -1846,6 +1869,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l2'"
         }
       }
     },
@@ -2218,6 +2247,12 @@
           "error": true,
           "error_type": "KeyError",
           "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "error": true,
+          "error_type": "KeyError",
+          "error_message": "'Missing Victron sample shelly-pro-3em-l3'"
         }
       }
     },
@@ -2468,6 +2503,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 1458.5
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 787.8
         }
       }
     },
@@ -2718,6 +2757,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": -1126
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": -501
         }
       }
     },
@@ -2968,6 +3011,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 49.84
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 49.7
         }
       }
     },
@@ -3218,6 +3265,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 22.6
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 10.1
         }
       }
     },
@@ -3468,6 +3519,10 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 34.0
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 35.0
         }
       }
     },
@@ -3718,14 +3773,18 @@
         "1795510800": {
           "iso_time": "2026-11-24T10:00:00",
           "value": 16.9
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 17.0
         }
       }
     },
     "apsystems1": {
       "date": "24/11/2026",
       "totals": {
-        "p1": 76.64,
-        "p2": 67.16
+        "p1": 110.05,
+        "p2": 99.93
       },
       "intervals": {
         "1795474800": {
@@ -4093,14 +4152,20 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.42:8050 ssl:default [Connect call failed ('192.168.5.42', 8050)]"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "p1": 44.0,
+          "p2": 41.0,
+          "total_w": 85.0
         }
       }
     },
     "apsystems2": {
       "date": "24/11/2026",
       "totals": {
-        "p1": 40.32,
-        "p2": 44.16
+        "p1": 55.34,
+        "p2": 63.25
       },
       "intervals": {
         "1795474800": {
@@ -4468,14 +4533,20 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.46:8050 ssl:default [Connect call failed ('192.168.5.46', 8050)]"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "p1": 38.0,
+          "p2": 37.0,
+          "total_w": 75.0
         }
       }
     },
     "apsystems3": {
       "date": "24/11/2026",
       "totals": {
-        "p1": 75.34,
-        "p2": 63.4
+        "p1": 110.63,
+        "p2": 97.27
       },
       "intervals": {
         "1795474800": {
@@ -4843,6 +4914,12 @@
           "error": true,
           "error_type": "ClientConnectorError",
           "error_message": "Cannot connect to host 192.168.5.43:8050 ssl:default [Connect call failed ('192.168.5.43', 8050)]"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "p1": 41.0,
+          "p2": 38.0,
+          "total_w": 79.0
         }
       }
     },
@@ -5099,6 +5176,10 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 304.9
         }
       }
     },
@@ -5351,6 +5432,10 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": -23.3
         }
       }
     },
@@ -5603,6 +5688,10 @@
           "error": true,
           "error_type": "TimeoutError",
           "error_message": "No response from Shelly EM"
+        },
+        "1795511400": {
+          "iso_time": "2026-11-24T10:10:00",
+          "value": 15.0
         }
       }
     }
