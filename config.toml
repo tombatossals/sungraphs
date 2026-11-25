@@ -131,3 +131,11 @@ id = "aac"
 label = "Aires acondicionados"
 em_id = 2
 digits = 1
+
+# Cámara que enfoca a las placas (snapshot.py). La URL, con usuario y
+# contraseña, va en camera.local.toml (no versionado):
+#   [camera]
+#   snapshot_url = "http://.../CGIProxy.fcgi?cmd=snapPicture2&usr=...&pwd=..."
+# latitude/longitude: si faltan, se captura también de noche.
+[camera]
+retention_days = 30
