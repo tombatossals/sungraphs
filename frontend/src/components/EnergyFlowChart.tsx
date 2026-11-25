@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import type { DailyData, Interval, SolarMetadata } from "../types";
 import { createLineChartOptions } from "./chartTheme";
+import { nearestLabelIndex, timeMarkerPlugin } from "./chartMarker";
 
 ChartJS.register(
   CategoryScale,
@@ -26,6 +27,7 @@ ChartJS.register(
 interface Props {
   dailyData: Record<string, DailyData>;
   metadata: SolarMetadata | null;
+  markerTime?: string | null;
 }
 
 interface Metric {
@@ -242,11 +244,13 @@ function ChartBlock({
   metrics,
   metadata,
   title,
+  markerTime = null,
 }: {
   dailyData: Record<string, DailyData>;
   metrics: Metric[];
   metadata: SolarMetadata | null;
   title: string;
+  markerTime?: string | null;
 }) {
   const { sortedTimestamps, series } = buildSeries(dailyData, metrics);
 
@@ -287,13 +291,19 @@ function ChartBlock({
     <div className="rounded border border-[color:var(--border)] bg-[color:var(--panel)] p-4">
       <h3 className="text-sm font-semibold" style={{ color: "var(--text-h)" }}>{title}</h3>
       <div className="mt-2" style={{ height: "18rem" }}>
-        <Line data={chartData} options={createOptions(title)} />
+        <Line
+          data={chartData}
+          options={createOptions(title)}
+          plugins={markerTime
+            ? [timeMarkerPlugin(nearestLabelIndex(labels, markerTime), readCssVar("--chart-text", "#647081"))]
+            : []}
+        />
       </div>
     </div>
   );
 }
 
-export default function EnergyFlowChart({ dailyData, metadata }: Props) {
+export default function EnergyFlowChart({ dailyData, metadata, markerTime = null }: Props) {
   const productionMetrics = getProductionMetrics(dailyData, metadata);
   const consumptionMetrics = getConsumptionMetrics(dailyData);
 
@@ -312,6 +322,7 @@ export default function EnergyFlowChart({ dailyData, metadata }: Props) {
           metrics={productionMetrics}
           metadata={metadata}
           title="Producción"
+          markerTime={markerTime}
         />
         <ChartBlock
           dailyData={dailyData}

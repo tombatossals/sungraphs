@@ -5,8 +5,7 @@ import VictronStats from "./components/VictronStats";
 import EnergyFlowChart from "./components/EnergyFlowChart";
 import CameraTimelapse from "./components/CameraTimelapse";
 import { useSolarData } from "./useSolarData";
-
-const noop = () => {};
+import { useCallback, useState } from "react";
 
 export default function App() {
   const {
@@ -19,6 +18,9 @@ export default function App() {
     selectedHistoryEntry,
     metadata,
   } = useSolarData();
+  const [camera, setCamera] = useState<{ date: string; time: string | null }>({ date: "", time: null });
+  const onCameraTime = useCallback((time: string | null) => setCamera({ date, time }), [date]);
+  const markerTime = camera.date === date ? camera.time : null;
 
   return (
     <>
@@ -38,11 +40,11 @@ export default function App() {
           )
         )}
         <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} metadata={metadata} />
-        <CameraTimelapse key={date} date={date} onTimeChange={noop} />
+        <CameraTimelapse key={date} date={date} onTimeChange={onCameraTime} />
         {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-") || k.startsWith("shelly1-")) && (
           <VictronStats dailyData={dailyData} metadata={metadata} />
         )}
-        <EnergyFlowChart dailyData={dailyData} metadata={metadata} />
+        <EnergyFlowChart dailyData={dailyData} metadata={metadata} markerTime={markerTime} />
       </div>
     </>
   );

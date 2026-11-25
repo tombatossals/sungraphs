@@ -28,6 +28,14 @@ describe("CameraTimelapse", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("renders nothing when server answers HTML instead of JSON (SPA fallback)", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.reject(new SyntaxError("html")) })));
+    const { container } = render(<CameraTimelapse date="2026-01-01" onTimeChange={() => {}} />);
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    await new Promise(r => setTimeout(r, 0));
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it("shows the latest image as thumbnail", async () => {
     mockFetch(true);
     render(<CameraTimelapse date="2026-11-25" onTimeChange={() => {}} />);
