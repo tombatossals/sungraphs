@@ -3,7 +3,10 @@ import ProductionHeatmap from "./components/ProductionHeatmap";
 import InverterStats from "./components/InverterStats";
 import VictronStats from "./components/VictronStats";
 import EnergyFlowChart from "./components/EnergyFlowChart";
+import CameraTimelapse from "./components/CameraTimelapse";
 import { useSolarData } from "./useSolarData";
+
+const noop = () => {};
 
 export default function App() {
   const {
@@ -35,6 +38,7 @@ export default function App() {
           )
         )}
         <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} metadata={metadata} />
+        <CameraTimelapse key={date} date={date} onTimeChange={noop} />
         {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-") || k.startsWith("shelly1-")) && (
           <VictronStats dailyData={dailyData} metadata={metadata} />
         )}
