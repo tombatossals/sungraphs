@@ -291,7 +291,13 @@ def build_snapshot(client, target_date=None):
     inverter = inverters[0]
 
     telemetry = get_device_factors(client, inverter, "telemetry")
-    counters = get_device_factors(client, inverter, "telecounting")
+    try:
+        counters = get_device_factors(client, inverter, "telecounting")
+    except (SemsPlusError, requests.exceptions.RequestException, ValueError):
+        # Desde 2026-11-19 SEMS+ responde A0400 a /telecounting con cualquier
+        # combinación de parámetros. El total diario sale entonces de
+        # /stations/statistics; solo se pierde el acumulado total (etotal).
+        counters = {}
 
     kpi = {}
     pac = kw_to_w(telemetry.get("pAc"))
