@@ -5,6 +5,7 @@ import VictronStats from "./components/VictronStats";
 import EnergyFlowChart from "./components/EnergyFlowChart";
 import CameraTimelapse from "./components/CameraTimelapse";
 import { useSolarData } from "./useSolarData";
+import { productionAt } from "./production";
 import { useCallback, useState } from "react";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
   const [camera, setCamera] = useState<{ date: string; time: string | null }>({ date: "", time: null });
   const onCameraTime = useCallback((time: string | null) => setCamera({ date, time }), [date]);
   const markerTime = camera.date === date ? camera.time : null;
+  const powerAt = useCallback((time: string) => productionAt(dailyData, metadata, time), [dailyData, metadata]);
 
   return (
     <>
@@ -40,7 +42,7 @@ export default function App() {
           )
         )}
         <InverterStats entry={selectedHistoryEntry} dailyData={dailyData} metadata={metadata} />
-        <CameraTimelapse key={date} date={date} onTimeChange={onCameraTime} />
+        <CameraTimelapse key={date} date={date} onTimeChange={onCameraTime} powerAt={powerAt} />
         {dailyData && Object.keys(dailyData).some(k => k.startsWith("victron1-") || k.startsWith("shelly1-")) && (
           <VictronStats dailyData={dailyData} metadata={metadata} />
         )}

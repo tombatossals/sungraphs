@@ -22,6 +22,7 @@ ChartJS.register(
   LineElement,
   PointElement,
   Tooltip,
+  timeMarkerPlugin,
 );
 
 interface Props {
@@ -174,7 +175,7 @@ function getLabels(dailyData: Record<string, DailyData>, metrics: Metric[], time
   });
 }
 
-function createOptions(title: string): ChartOptions<"line"> {
+function createOptions(title: string, markerIndex = -1): ChartOptions<"line"> {
   const baseOptions = createLineChartOptions();
   const textColor = readCssVar("--chart-text", "#647081");
   const isSmallScreen = typeof window !== "undefined" && window.innerWidth < 640;
@@ -183,6 +184,7 @@ function createOptions(title: string): ChartOptions<"line"> {
     ...baseOptions,
     plugins: {
       ...baseOptions.plugins,
+      cameraTimeMarker: { index: markerIndex, color: textColor },
       legend: {
         ...baseOptions.plugins?.legend,
         position: "top",
@@ -293,10 +295,7 @@ function ChartBlock({
       <div className="mt-2" style={{ height: "18rem" }}>
         <Line
           data={chartData}
-          options={createOptions(title)}
-          plugins={markerTime
-            ? [timeMarkerPlugin(nearestLabelIndex(labels, markerTime), readCssVar("--chart-text", "#647081"))]
-            : []}
+          options={createOptions(title, markerTime ? nearestLabelIndex(labels, markerTime) : -1)}
         />
       </div>
     </div>

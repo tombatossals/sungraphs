@@ -62,4 +62,11 @@ describe("CameraTimelapse", () => {
     fireEvent.click(screen.getByRole("button", { name: /cerrar/i }));
     expect(onTimeChange).toHaveBeenLastCalledWith(null);
   });
+
+  it("shows production power for the selected photo", async () => {
+    mockFetch(true);
+    render(<CameraTimelapse date="2026-11-25" onTimeChange={() => {}} powerAt={t => (t === "16:00" ? 1234 : null)} />);
+    fireEvent.click(await screen.findByRole("button", { name: /ver evolución/i }));
+    expect(screen.getByText(/1[.,]2 kW|1234 W/)).toBeInTheDocument();
+  });
 });

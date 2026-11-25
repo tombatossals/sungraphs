@@ -1,4 +1,4 @@
-import type { Plugin } from "chart.js";
+import type { ChartType, Plugin } from "chart.js";
 
 function toMinutes(hhmm: string): number | null {
   const m = /^(\d{2}):(\d{2})$/.exec(hhmm);
@@ -23,23 +23,38 @@ export function nearestLabelIndex(labels: string[], time: string): number {
   return best;
 }
 
-/** Plugin que dibuja una línea vertical discontinua en el índice `index` del eje x. */
-export function timeMarkerPlugin(index: number, color: string): Plugin<"line"> {
-  return {
-    id: "cameraTimeMarker",
-    afterDatasetsDraw(chart) {
-      if (index < 0) return;
-      const { ctx, chartArea, scales } = chart;
-      const x = scales.x.getPixelForValue(index);
-      ctx.save();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(x, chartArea.top);
-      ctx.lineTo(x, chartArea.bottom);
-      ctx.stroke();
-      ctx.restore();
-    },
-  };
+export interface TimeMarkerOptions {
+  index: number;
+  color: string;
 }
+
+declare module "chart.js" {
+  interface PluginOptionsByType<TType extends ChartType> {
+    cameraTimeMarker?: TimeMarkerOptions & { _t?: TType };
+  }
+}
+
+/**
+ * Plugin estable (registrado una vez) que dibuja una línea vertical discontinua.
+ * Lee el índice de options.plugins.cameraTimeMarker: react-chartjs-2 sí propaga
+ * los cambios de options, pero no los de la prop `plugins`.
+ */
+export const timeMarkerPlugin: Plugin<"line", TimeMarkerOptions> = {
+  id: "cameraTimeMarker",
+  defaults: { index: -1, color: "#647081" },
+  afterDatasetsDraw(chart, _args, opts) {
+    const index = opts?.index ?? -1;
+    if (index < 0) return;
+    const { ctx, chartArea, scales } = chart;
+    const x = scales.x.getPixelForValue(index);
+    ctx.save();
+    ctx.strokeStyle = opts.color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  },
+};

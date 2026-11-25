@@ -4,12 +4,17 @@ import { cameraImageUrl, useCameraIndex } from "../camera";
 interface Props {
   date: string;
   onTimeChange: (time: string | null) => void;
+  powerAt?: (time: string) => number | null;
+}
+
+function formatWatts(value: number): string {
+  return Math.abs(value) >= 1000 ? `${(value / 1000).toFixed(1)} kW` : `${Math.round(value)} W`;
 }
 
 const FRAME_MS = 250;
 
 // Montar con key={date}: al cambiar de día se reinicia el visor.
-export default function CameraTimelapse({ date, onTimeChange }: Props) {
+export default function CameraTimelapse({ date, onTimeChange, powerAt }: Props) {
   const index = useCameraIndex(date);
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(0);
@@ -41,6 +46,7 @@ export default function CameraTimelapse({ date, onTimeChange }: Props) {
 
   const latest = images[last];
   const current = images[Math.min(pos, last)];
+  const power = powerAt?.(current.time) ?? null;
 
   const select = (i: number) => {
     setPos(i);
@@ -84,6 +90,11 @@ export default function CameraTimelapse({ date, onTimeChange }: Props) {
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-h)" }}>
           Cámara · {current.time}
+          {power !== null && (
+            <span className="ml-2 font-normal" style={{ color: "var(--text-soft)" }}>
+              · {formatWatts(power)}
+            </span>
+          )}
         </h3>
         <button type="button" onClick={close} aria-label="Cerrar" className="px-2 text-sm" style={{ color: "var(--text-soft)" }}>
           ✕
